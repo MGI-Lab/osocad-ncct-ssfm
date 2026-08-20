@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+
+# Private or generated study data
+/data/
+/metrics/
+/reports/
+/runs/
+/github_data/
+*.xlsx
+
+# Generated release pages
+html1.html
