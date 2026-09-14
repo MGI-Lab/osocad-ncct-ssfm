@@ -112,19 +112,17 @@ outputs, and document the cause before changing an approved result.
 
 ## Panel descriptions
 
-These are working asset identifiers, not a renumbering of the assembled article.
+Asset identifiers now match the assembled article.
 
 | Asset | Content |
 | --- | --- |
-| Fig2_A/B/C | Internal AI ROC, predicted probabilities, exploratory t-SNE |
-| Fig3_A/B/C/D | Pooled external ROC, predicted probabilities, exploratory t-SNE, center-specific performance |
-| Fig4_A/B/C/D | Prospective ROC, three-setting performance, predicted probabilities, exploratory t-SNE |
-| Fig5_A/B | External three-model ROC and sensitivity/NPV comparison |
-| Fig5_C/D | Prospective three-model ROC and sensitivity/NPV comparison |
-| Fig5_E/F | Real-world AI ROC and four-setting performance |
-| Fig5_G/H/I | Real-world three-model ROC, sensitivity/NPV comparison, predicted probabilities |
+| Figure2_A–F | Internal AI ROC, pooled external AI ROC, center-specific performance, prospective AI ROC, real-world AI ROC, and four-cohort performance |
+| Figure3_A–F | External, prospective, and real-world three-model ROC and sensitivity/NPV comparisons |
+| ExtendedDataFigure2_A–D | Internal, pooled external, prospective, and real-world predicted probabilities |
 
 The panels keep the approved sans-serif typography, physical size, plot types,
-colors, and labels. All 20 panels have PNG previews and editable PDF/SVG versions.
+colors, axes, legends, and numerical labels. Redundant standalone titles were
+removed because the composite supplies the figure and panel context. All 16
+current panels have PNG previews and editable PDF/SVG versions.
 No case-level source CSV, t-SNE coordinate table, or original study workbook is
 included in this publication bundle.

@@ -28,6 +28,16 @@ SOURCE_NAMES = {'Table3_exact_statistics.csv', 'panel_statistics.csv', 'all_coho
                 'all_cohort_auc_comparisons_delong.csv', 'ai_figure_metrics.csv',
                 'calcium_figure_metrics.csv', 'real_world_three_method_metrics.csv',
                 'real_world_binary_comparisons.csv'}
+REDUNDANT_PANEL_TITLES = {
+    'Internal', 'External', 'Prospective', 'Real world',
+    'External Center Metrics',
+    'Internal / External / Prospective / Real world Metrics',
+    'External Validation ROC Comparison',
+    'External Validation Sensitivity and NPV',
+    'Prospective ROC Comparison', 'Prospective Comparison',
+    'Real-world ROC Comparison', 'Real-world Sensitivity and NPV',
+    'Internal (n=513)', 'External (n=747)', 'Prospective (n=410)',
+}
 
 
 def builder_module(root):
@@ -74,21 +84,37 @@ def check_bundle(root: Path) -> dict:
     expected_paths = [entry['path'] for entry in entries]
     check(len(entries) == len(set(expected_paths)), 'No duplicate manifest paths')
     check({Path(row['path']).name for row in manifest['aggregate_statistics']} == SOURCE_NAMES, 'Aggregate source allowlist')
-    check([row['panel'] for row in manifest['figures']] == builder.FIGURE_ORDER, 'All 20 approved panels present in order')
+    check([row['panel'] for row in manifest['figures']] == builder.FIGURE_ORDER,
+          'All 16 approved panels present in manuscript order')
     groups = builder.MANUSCRIPT_PANEL_GROUPS
     manuscript_panels = [source for _, panels in groups for _, source in panels]
     check([title for title, _ in groups] == ['Figure 2', 'Figure 3', 'Extended Data Figure 2'],
           'Current manuscript figure groups present in order')
     check([''.join(label for label, _ in panels) for _, panels in groups] == ['abcdef', 'abcdef', 'abcd'],
           'Current manuscript panel labels present in order')
-    check(len(manuscript_panels) == len(set(manuscript_panels)) == 16
-          and set(manuscript_panels) <= set(builder.FIGURE_ORDER),
-          'Current manuscript uses 16 unique approved panels')
+    check(manuscript_panels == builder.FIGURE_ORDER
+          and len(manuscript_panels) == len(set(manuscript_panels)) == 16,
+          'Current manuscript uses exactly 16 canonically named panels')
+    for figure in manifest['figures']:
+        check(all(Path(figure[extension]['path']).stem == figure['panel']
+                  for extension in ['png', 'pdf', 'svg']),
+              f'Figure filenames match manuscript panel: {figure["panel"]}')
     for entry in entries:
         path = safe_path(root, entry['path'])
         check(path.is_file(), f'Exists: {entry["path"]}')
         if path.is_file():
             check(hashlib.sha256(path.read_bytes()).hexdigest() == entry['sha256'], f'Checksum: {entry["path"]}')
+    for figure in manifest['figures']:
+        svg_path = safe_path(root, figure['svg']['path'])
+        if svg_path.is_file():
+            svg = svg_path.read_text(encoding='utf-8', errors='replace')
+            bold_text = set(re.findall(
+                r'<text\b(?=[^>]*font-weight:\s*700)[^>]*>(.*?)</text>',
+                svg,
+                flags=re.DOTALL,
+            ))
+            check(not (bold_text & REDUNDANT_PANEL_TITLES),
+                  f'No redundant standalone title: {figure["panel"]}')
     tables = builder.read_tables(root)
     ai = tables['table1_ai_performance.csv']
     comparison = tables['table2_calcium_comparison.csv']
@@ -138,6 +164,8 @@ def check_bundle(root: Path) -> dict:
     for path in (root / 'paper_plots').rglob('*'):
         if path.is_file():
             check(path.relative_to(root).as_posix() in published, f'No unreviewed result file: {path.relative_to(root)}')
+    check(not any((root / 'paper_plots').glob('Fig[2345]_?*.*')),
+          'No legacy working-number panel files in current bundle')
     for name in SOURCE_NAMES | set(builder.TABLES):
         path = root / 'paper_plots' / ('submission_sources/' if name in SOURCE_NAMES else '') / name
         headers = list(load_dicts(path)[0])

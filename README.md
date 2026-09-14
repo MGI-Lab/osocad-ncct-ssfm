@@ -13,7 +13,9 @@ uploaded before the earlier history remediation. See [PRIVACY.md](PRIVACY.md).
 
 The approved aggregate CSVs in `paper_plots/` are the publication display source.
 The README result section and `index.html` are generated from those files.
-The approved figures are preserved without recalculation or redesign.
+The approved figure values and data geometry are preserved. Current panel
+filenames and redundant standalone titles are synchronized to the manuscript
+assembly without changing the plotted results.
 
 | Repository file | Manuscript content |
 | --- | --- |
@@ -23,8 +25,8 @@ The approved figures are preserved without recalculation or redesign.
 | `paper_plots/submission_manifest.json` | Approved figure/table checksums |
 
 The two CSV filenames are retained for compatibility. Their numbers are not
-the manuscript table numbers. Standalone panel filenames also retain the
-working figure numbering; see the panel descriptions in
+the manuscript table numbers. Standalone panel filenames now match their
+current manuscript labels; see the panel descriptions in
 [Reproducibility](docs/REPRODUCIBILITY.md).
 
 Check the public result bundle without installing the model environment:
@@ -138,9 +140,11 @@ python code/plotting/export_manuscript_tables.py \
 ## Access, versioning, and citation
 
 Code is hosted at <https://github.com/MGI-Lab/osocad-ncct-ssfm>.
-The submission version is `v1.0.0`; its publication status and downloadable assets
-are shown on the [GitHub Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.0).
-The version retains the approved final numerical results and 20 standalone panels.
+The current submission version is `v1.0.1`; its publication status and downloadable
+assets are shown on the [GitHub Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.1).
+It retains the approved final numerical results and the 16 standalone panels used
+by the current manuscript assembly. The immutable `v1.0.0` release preserves the
+earlier 20-panel working-number package for historical audit.
 Code Ocean is not used. A version DOI, software licensing, and any controlled-data
 access commitment remain separate decisions requiring the authors' approval.
 This repository does not claim an unpublished DOI or grant institutional data
@@ -190,38 +194,38 @@ Point estimates are shown with 95% confidence intervals. AUC intervals use DeLon
 
 ### Final standalone panels
 
-Panel labels below follow the current manuscript assembly. Linked filenames retain their earlier working identifiers; PNG previews and editable PDF/SVG versions contain the same approved figure content. The current assembly uses 16 of the 20 assets frozen in `v1.0.0`; the other four remain preserved in that release but are not part of the groupings below.
+Panel labels and linked filenames below match the current manuscript assembly. Each of the 16 current panels is supplied as a PNG preview and editable PDF/SVG. Redundant standalone titles have been removed because figure and panel context is supplied by the final composite layout.
 
 #### Figure 2
 
 | Manuscript panel | Preview | Editable PDF | Editable SVG |
 | --- | --- | --- | --- |
-| a | [PNG](paper_plots/Fig2_A.png) | [PDF](paper_plots/Fig2_A.pdf) | [SVG](paper_plots/Fig2_A.svg) |
-| b | [PNG](paper_plots/Fig3_A.png) | [PDF](paper_plots/Fig3_A.pdf) | [SVG](paper_plots/Fig3_A.svg) |
-| c | [PNG](paper_plots/Fig3_D.png) | [PDF](paper_plots/Fig3_D.pdf) | [SVG](paper_plots/Fig3_D.svg) |
-| d | [PNG](paper_plots/Fig4_A.png) | [PDF](paper_plots/Fig4_A.pdf) | [SVG](paper_plots/Fig4_A.svg) |
-| e | [PNG](paper_plots/Fig5_E.png) | [PDF](paper_plots/Fig5_E.pdf) | [SVG](paper_plots/Fig5_E.svg) |
-| f | [PNG](paper_plots/Fig5_F.png) | [PDF](paper_plots/Fig5_F.pdf) | [SVG](paper_plots/Fig5_F.svg) |
+| a | [PNG](paper_plots/Figure2_A.png) | [PDF](paper_plots/Figure2_A.pdf) | [SVG](paper_plots/Figure2_A.svg) |
+| b | [PNG](paper_plots/Figure2_B.png) | [PDF](paper_plots/Figure2_B.pdf) | [SVG](paper_plots/Figure2_B.svg) |
+| c | [PNG](paper_plots/Figure2_C.png) | [PDF](paper_plots/Figure2_C.pdf) | [SVG](paper_plots/Figure2_C.svg) |
+| d | [PNG](paper_plots/Figure2_D.png) | [PDF](paper_plots/Figure2_D.pdf) | [SVG](paper_plots/Figure2_D.svg) |
+| e | [PNG](paper_plots/Figure2_E.png) | [PDF](paper_plots/Figure2_E.pdf) | [SVG](paper_plots/Figure2_E.svg) |
+| f | [PNG](paper_plots/Figure2_F.png) | [PDF](paper_plots/Figure2_F.pdf) | [SVG](paper_plots/Figure2_F.svg) |
 
 #### Figure 3
 
 | Manuscript panel | Preview | Editable PDF | Editable SVG |
 | --- | --- | --- | --- |
-| a | [PNG](paper_plots/Fig5_A.png) | [PDF](paper_plots/Fig5_A.pdf) | [SVG](paper_plots/Fig5_A.svg) |
-| b | [PNG](paper_plots/Fig5_B.png) | [PDF](paper_plots/Fig5_B.pdf) | [SVG](paper_plots/Fig5_B.svg) |
-| c | [PNG](paper_plots/Fig5_C.png) | [PDF](paper_plots/Fig5_C.pdf) | [SVG](paper_plots/Fig5_C.svg) |
-| d | [PNG](paper_plots/Fig5_D.png) | [PDF](paper_plots/Fig5_D.pdf) | [SVG](paper_plots/Fig5_D.svg) |
-| e | [PNG](paper_plots/Fig5_G.png) | [PDF](paper_plots/Fig5_G.pdf) | [SVG](paper_plots/Fig5_G.svg) |
-| f | [PNG](paper_plots/Fig5_H.png) | [PDF](paper_plots/Fig5_H.pdf) | [SVG](paper_plots/Fig5_H.svg) |
+| a | [PNG](paper_plots/Figure3_A.png) | [PDF](paper_plots/Figure3_A.pdf) | [SVG](paper_plots/Figure3_A.svg) |
+| b | [PNG](paper_plots/Figure3_B.png) | [PDF](paper_plots/Figure3_B.pdf) | [SVG](paper_plots/Figure3_B.svg) |
+| c | [PNG](paper_plots/Figure3_C.png) | [PDF](paper_plots/Figure3_C.pdf) | [SVG](paper_plots/Figure3_C.svg) |
+| d | [PNG](paper_plots/Figure3_D.png) | [PDF](paper_plots/Figure3_D.pdf) | [SVG](paper_plots/Figure3_D.svg) |
+| e | [PNG](paper_plots/Figure3_E.png) | [PDF](paper_plots/Figure3_E.pdf) | [SVG](paper_plots/Figure3_E.svg) |
+| f | [PNG](paper_plots/Figure3_F.png) | [PDF](paper_plots/Figure3_F.pdf) | [SVG](paper_plots/Figure3_F.svg) |
 
 #### Extended Data Figure 2
 
 | Manuscript panel | Preview | Editable PDF | Editable SVG |
 | --- | --- | --- | --- |
-| a | [PNG](paper_plots/Fig2_B.png) | [PDF](paper_plots/Fig2_B.pdf) | [SVG](paper_plots/Fig2_B.svg) |
-| b | [PNG](paper_plots/Fig3_B.png) | [PDF](paper_plots/Fig3_B.pdf) | [SVG](paper_plots/Fig3_B.svg) |
-| c | [PNG](paper_plots/Fig4_C.png) | [PDF](paper_plots/Fig4_C.pdf) | [SVG](paper_plots/Fig4_C.svg) |
-| d | [PNG](paper_plots/Fig5_I.png) | [PDF](paper_plots/Fig5_I.pdf) | [SVG](paper_plots/Fig5_I.svg) |
+| a | [PNG](paper_plots/ExtendedDataFigure2_A.png) | [PDF](paper_plots/ExtendedDataFigure2_A.pdf) | [SVG](paper_plots/ExtendedDataFigure2_A.svg) |
+| b | [PNG](paper_plots/ExtendedDataFigure2_B.png) | [PDF](paper_plots/ExtendedDataFigure2_B.pdf) | [SVG](paper_plots/ExtendedDataFigure2_B.svg) |
+| c | [PNG](paper_plots/ExtendedDataFigure2_C.png) | [PDF](paper_plots/ExtendedDataFigure2_C.pdf) | [SVG](paper_plots/ExtendedDataFigure2_C.svg) |
+| d | [PNG](paper_plots/ExtendedDataFigure2_D.png) | [PDF](paper_plots/ExtendedDataFigure2_D.pdf) | [SVG](paper_plots/ExtendedDataFigure2_D.svg) |
 
 [Exact aggregate statistics](paper_plots/submission_sources/) · [File checksums](paper_plots/submission_manifest.json)
 

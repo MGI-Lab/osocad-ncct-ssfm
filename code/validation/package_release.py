@@ -9,6 +9,9 @@ import zipfile
 
 from verify_submission import ROOT, check_bundle, manifest_entries, safe_path
 
+EXPECTED_APPROVED_ARTIFACTS = 58
+EXPECTED_ARCHIVE_MEMBERS = 59
+
 
 def audit_history(root):
     commits = subprocess.check_output(['git', '-C', str(root), 'rev-list', '--all'], text=True).splitlines()
@@ -35,8 +38,8 @@ def package(output, root=ROOT):
     manifest_bytes = manifest_path.read_bytes()
     manifest = json.loads(manifest_bytes)
     entries = manifest_entries(manifest)
-    if len(entries) != 70:
-        raise ValueError('Expected exactly 70 approved figure/table artifacts')
+    if len(entries) != EXPECTED_APPROVED_ARTIFACTS:
+        raise ValueError(f'Expected exactly {EXPECTED_APPROVED_ARTIFACTS} approved figure/table artifacts')
     output.parent.mkdir(parents=True, exist_ok=True)
     # Exclusive creation: never replace a previously produced release asset.
     with zipfile.ZipFile(output, 'x', compression=zipfile.ZIP_DEFLATED) as archive:
@@ -55,9 +58,10 @@ def package(output, root=ROOT):
             raise ValueError('Submission manifest changed during packaging')
         archive.writestr(info, manifest_bytes)
     with zipfile.ZipFile(output) as archive:
-        if archive.testzip() is not None or len(archive.namelist()) != 71:
+        if archive.testzip() is not None or len(archive.namelist()) != EXPECTED_ARCHIVE_MEMBERS:
             raise ValueError('Release archive integrity check failed')
-    return {'status': 'PASS', 'approved_artifacts': 70, 'archive_members': 71,
+    return {'status': 'PASS', 'approved_artifacts': EXPECTED_APPROVED_ARTIFACTS,
+            'archive_members': EXPECTED_ARCHIVE_MEMBERS,
             'current_reachable_history_commits': commit_count,
             'sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
             'bytes': output.stat().st_size, 'clinical_reproduction': 'not_run'}

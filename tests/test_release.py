@@ -50,18 +50,18 @@ class SuccessfulReleaseTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.temporary.cleanup()
 
-    def test_real_release_contains_70_hashed_artifacts_and_manifest(self):
+    def test_real_release_contains_58_hashed_artifacts_and_manifest(self):
         manifest_name = "paper_plots/submission_manifest.json"
         expected_manifest = (ROOT / manifest_name).read_bytes()
 
         with zipfile.ZipFile(self.first) as archive:
             self.assertIsNone(archive.testzip())
-            self.assertEqual(len(archive.namelist()), 71)
+            self.assertEqual(len(archive.namelist()), 59)
             self.assertEqual(archive.read(manifest_name), expected_manifest)
 
             manifest = json.loads(archive.read(manifest_name))
             entries = packager.manifest_entries(manifest)
-            self.assertEqual(len(entries), 70)
+            self.assertEqual(len(entries), 58)
             expected_names = {entry["path"] for entry in entries} | {manifest_name}
             self.assertEqual(set(archive.namelist()), expected_names)
             for entry in entries:
@@ -74,8 +74,8 @@ class SuccessfulReleaseTests(unittest.TestCase):
             )
 
         self.assertEqual(self.first_report["status"], "PASS")
-        self.assertEqual(self.first_report["approved_artifacts"], 70)
-        self.assertEqual(self.first_report["archive_members"], 71)
+        self.assertEqual(self.first_report["approved_artifacts"], 58)
+        self.assertEqual(self.first_report["archive_members"], 59)
 
     def test_two_real_release_archives_are_byte_deterministic(self):
         self.assertEqual(self.first.read_bytes(), self.second.read_bytes())

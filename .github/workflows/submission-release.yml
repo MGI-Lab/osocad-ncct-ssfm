@@ -1,19 +1,19 @@
-name: Publish approved submission v1.0.0
+name: Publish approved submission v1.0.1
 
 on:
   push:
-    tags: ['v1.0.0']
+    tags: ['v1.0.1']
 
 permissions:
   contents: write
 
 concurrency:
-  group: submission-release-v1.0.0
+  group: submission-release-v1.0.1
   cancel-in-progress: false
 
 jobs:
   publish:
-    if: github.repository == 'MGI-Lab/osocad-ncct-ssfm' && github.ref == 'refs/tags/v1.0.0'
+    if: github.repository == 'MGI-Lab/osocad-ncct-ssfm' && github.ref == 'refs/tags/v1.0.1'
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:
@@ -23,9 +23,9 @@ jobs:
         run: |
           git init checkout
           git -C checkout remote add origin https://github.com/MGI-Lab/osocad-ncct-ssfm.git
-          git -C checkout fetch --no-tags origin refs/heads/main:refs/remotes/origin/main refs/tags/v1.0.0:refs/tags/v1.0.0
+          git -C checkout fetch --no-tags origin refs/heads/main:refs/remotes/origin/main refs/tags/v1.0.1:refs/tags/v1.0.1
           git -C checkout checkout --detach "$GITHUB_SHA"
-          test "$(git -C checkout rev-parse HEAD)" = "$(git -C checkout rev-parse 'v1.0.0^{commit}')"
+          test "$(git -C checkout rev-parse HEAD)" = "$(git -C checkout rev-parse 'v1.0.1^{commit}')"
           git -C checkout merge-base --is-ancestor HEAD origin/main
       - name: Validate the publication bundle
         working-directory: checkout
@@ -39,16 +39,16 @@ jobs:
       - name: Package only approved figures and tables
         working-directory: checkout
         run: |
-          python3 code/validation/package_release.py --output "$RUNNER_TEMP/submission_figures_tables_v1.0.0.zip"
+          python3 code/validation/package_release.py --output "$RUNNER_TEMP/submission_figures_tables_v1.0.1.zip"
       - name: Publish formal GitHub Release
         working-directory: checkout
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v1.0.0 \
+          gh release create v1.0.1 \
             --repo MGI-Lab/osocad-ncct-ssfm \
             --verify-tag --target "$GITHUB_SHA" --latest \
-            --title 'v1.0.0 — Manuscript submission snapshot' \
-            --notes-file docs/RELEASE_v1.0.0.md \
-            "$RUNNER_TEMP/submission_figures_tables_v1.0.0.zip#Final approved figures and tables"
-          gh release view v1.0.0 --repo MGI-Lab/osocad-ncct-ssfm --json url,isDraft,isPrerelease,tagName
+            --title 'v1.0.1 — Manuscript panel alignment' \
+            --notes-file docs/RELEASE_v1.0.1.md \
+            "$RUNNER_TEMP/submission_figures_tables_v1.0.1.zip#Final approved figures and tables"
+          gh release view v1.0.1 --repo MGI-Lab/osocad-ncct-ssfm --json url,isDraft,isPrerelease,tagName

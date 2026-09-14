@@ -39,22 +39,24 @@ class DisplayTests(unittest.TestCase):
         self.assertNotIn('<script>', rendered)
         self.assertIn('&lt;script&gt;', rendered)
 
-    def test_render_is_deterministic_and_includes_20_figures(self):
+    def test_render_is_deterministic_and_includes_16_figures(self):
         tables = builder.read_tables(ROOT)
         first = builder.render_index(tables)
         self.assertEqual(first, builder.render_index(tables))
-        self.assertEqual(first.count('<img '), 20)
-        self.assertIn('Fig5_I.png', first)
+        self.assertEqual(first.count('<img '), 16)
+        self.assertIn('ExtendedDataFigure2_D.png', first)
 
     def test_readme_panels_follow_current_manuscript_assembly(self):
         section = builder.generated_section(builder.read_tables(ROOT))
         expected = (
-            ('Figure 2', (('a', 'Fig2_A'), ('b', 'Fig3_A'), ('c', 'Fig3_D'),
-                          ('d', 'Fig4_A'), ('e', 'Fig5_E'), ('f', 'Fig5_F'))),
-            ('Figure 3', (('a', 'Fig5_A'), ('b', 'Fig5_B'), ('c', 'Fig5_C'),
-                          ('d', 'Fig5_D'), ('e', 'Fig5_G'), ('f', 'Fig5_H'))),
-            ('Extended Data Figure 2', (('a', 'Fig2_B'), ('b', 'Fig3_B'),
-                                        ('c', 'Fig4_C'), ('d', 'Fig5_I'))),
+            ('Figure 2', (('a', 'Figure2_A'), ('b', 'Figure2_B'), ('c', 'Figure2_C'),
+                          ('d', 'Figure2_D'), ('e', 'Figure2_E'), ('f', 'Figure2_F'))),
+            ('Figure 3', (('a', 'Figure3_A'), ('b', 'Figure3_B'), ('c', 'Figure3_C'),
+                          ('d', 'Figure3_D'), ('e', 'Figure3_E'), ('f', 'Figure3_F'))),
+            ('Extended Data Figure 2', (('a', 'ExtendedDataFigure2_A'),
+                                        ('b', 'ExtendedDataFigure2_B'),
+                                        ('c', 'ExtendedDataFigure2_C'),
+                                        ('d', 'ExtendedDataFigure2_D'))),
         )
         self.assertEqual(builder.MANUSCRIPT_PANEL_GROUPS, expected)
         self.assertEqual(section.count('[PNG]('), 16)
@@ -63,8 +65,8 @@ class DisplayTests(unittest.TestCase):
             self.assertIn(f'#### {title}', section)
             for label, source in rows:
                 self.assertIn(f'| {label} | [PNG](paper_plots/{source}.png)', section)
-        for unused in ['Fig2_C', 'Fig3_C', 'Fig4_B', 'Fig4_D']:
-            self.assertNotIn(f'paper_plots/{unused}.png', section)
+        for legacy_prefix in ['Fig2_', 'Fig3_', 'Fig4_', 'Fig5_']:
+            self.assertNotIn(f'paper_plots/{legacy_prefix}', section)
         self.assertNotIn('Receiver operating characteristic', section)
         self.assertNotIn('Predicted probability distributions', section)
 
@@ -123,17 +125,17 @@ class FrozenBundleNegativeTests(unittest.TestCase):
         self.assertEqual(report['status'], 'PASS', report['failures'])
 
     def test_changed_frozen_figure_fails_checksum(self):
-        path = self.root / 'paper_plots/Fig5_I.png'
+        path = self.root / 'paper_plots/ExtendedDataFigure2_D.png'
         path.write_bytes(path.read_bytes() + b'synthetic-corruption-test')
         report = validator.check_bundle(self.root)
         self.assertEqual(report['status'], 'FAIL')
-        self.assertIn('Checksum: paper_plots/Fig5_I.png', report['failures'])
+        self.assertIn('Checksum: paper_plots/ExtendedDataFigure2_D.png', report['failures'])
 
     def test_missing_figure_fails(self):
-        (self.root / 'paper_plots/Fig5_I.png').unlink()
+        (self.root / 'paper_plots/ExtendedDataFigure2_D.png').unlink()
         report = validator.check_bundle(self.root)
         self.assertEqual(report['status'], 'FAIL')
-        self.assertIn('Exists: paper_plots/Fig5_I.png', report['failures'])
+        self.assertIn('Exists: paper_plots/ExtendedDataFigure2_D.png', report['failures'])
 
     def test_unreviewed_result_file_fails(self):
         (self.root / 'paper_plots/unreviewed_synthetic.csv').write_text('Synthetic ID,Value\na,0\n')

@@ -1,11 +1,11 @@
 # Submission validation — 14 September 2026
 
-This reviewed update is based on public commit
-`b00b22f3951eb9e56e374dd2925cd89e3f8c05cb`. Publication of the repository update,
-including replacement of the old panels with the final 20 panels, was approved
-on 14 September 2026. The `v1.0.0` submission release is authorized separately
-and is built from these unchanged result assets. Its publication status is
-recorded on the repository's Release page. No DOI archive is claimed.
+This reviewed update starts from public commit
+`30f0bf7ae22b682ac18f18d5fcf072eae7142702`. It aligns the final 16 panel assets
+with the current manuscript numbering and accepted composite styling. The
+`v1.0.1` submission release is a new snapshot; the `v1.0.0` tag and Release are
+not moved or replaced. Publication status is recorded on the repository's
+Release page. No DOI archive is claimed.
 The update does not use Code Ocean.
 
 ## Checks completed
@@ -14,11 +14,13 @@ The update does not use Code Ocean.
   statistics agree at the stated precision. Ten stale AUC interval cells have
   been synchronized; all 66 pre-existing performance point estimates remain
   unchanged. Real-world sections are now present in both tables.
-- All 20 approved panels have PNG/PDF/SVG files. Their physical width is 88 mm;
+- All 16 current panels have manuscript-matched PNG/PDF/SVG filenames. Their
+  physical width is 88 mm;
   PNG resolution is 600 dpi. PDF/SVG labels remain editable, using the approved
-  Liberation Sans typography at 5–7 pt. The final Fig5_I label revision is
-  preserved. No clinical plot was recalculated or redesigned in this update.
-- The 70 approved data/figure artifacts match the submission manifest.
+  Liberation Sans typography at 5–7 pt. Fifteen redundant standalone titles
+  were removed; every curve, point, bar, axis, legend and numerical label was
+  preserved. A baseline rerender first matched all 16 prior PNGs pixel-for-pixel.
+- The 58 approved data/figure artifacts match the submission manifest.
   Checksum corruption, a missing figure, and an unreviewed extra result file
   are each rejected by regression tests. A source archive without `.git` also
   passes the bundle check.
@@ -33,7 +35,7 @@ The update does not use Code Ocean.
   bringing the current suite to 42 tests. The frozen `v1.0.0` tag-triggered
   workflow ran the then-current 14 submission tests and nine packaging tests;
   it does not rerun the dependency-based statistical suite or clinical analyses.
-  Packaging verifies the 70 approved assets plus their manifest, rejects an
+  Packaging verifies the 58 approved assets plus their manifest, rejects an
   existing output file and workbook-containing reachable history, and produces
   byte-identical archives on two runs in the same tested environment.
 - Statistical tests use explicitly synthetic fixtures, including an independent
@@ -43,8 +45,9 @@ The update does not use Code Ocean.
   not execute its pickle payload or run model inference.
 - Static checks of the reachable public history and candidate files did not
   identify direct patient identifier headers, private institutional paths, or
-  credential-like strings. The pre-update public history had one reachable commit; the four
-  known old commit API URLs returned 404 at the audit time.
+  credential-like strings. Before this update, the rebuilt public history had
+  five reachable commits and no workbook in any reachable tree. Four known
+  pre-remediation commit API URLs returned 404 at the earlier audit time.
 
 ## Limits and outstanding publication decisions
 

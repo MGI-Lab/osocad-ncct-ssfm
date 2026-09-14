@@ -20,19 +20,21 @@ TABLES = {
     'table2_calcium_comparison.csv': ('Table 2: Head-to-head comparison of the AI model versus '
                                       'traditional calcium scoring.'),
 }
-FIGURE_ORDER = ([f'Fig2_{p}' for p in 'ABC'] + [f'Fig3_{p}' for p in 'ABCD']
-                + [f'Fig4_{p}' for p in 'ABCD'] + [f'Fig5_{p}' for p in 'ABCDEFGHI'])
+FIGURE_ORDER = ([f'Figure2_{p}' for p in 'ABCDEF']
+                + [f'Figure3_{p}' for p in 'ABCDEF']
+                + [f'ExtendedDataFigure2_{p}' for p in 'ABCD'])
 MANUSCRIPT_PANEL_GROUPS = (
     ('Figure 2', (
-        ('a', 'Fig2_A'), ('b', 'Fig3_A'), ('c', 'Fig3_D'),
-        ('d', 'Fig4_A'), ('e', 'Fig5_E'), ('f', 'Fig5_F'),
+        ('a', 'Figure2_A'), ('b', 'Figure2_B'), ('c', 'Figure2_C'),
+        ('d', 'Figure2_D'), ('e', 'Figure2_E'), ('f', 'Figure2_F'),
     )),
     ('Figure 3', (
-        ('a', 'Fig5_A'), ('b', 'Fig5_B'), ('c', 'Fig5_C'),
-        ('d', 'Fig5_D'), ('e', 'Fig5_G'), ('f', 'Fig5_H'),
+        ('a', 'Figure3_A'), ('b', 'Figure3_B'), ('c', 'Figure3_C'),
+        ('d', 'Figure3_D'), ('e', 'Figure3_E'), ('f', 'Figure3_F'),
     )),
     ('Extended Data Figure 2', (
-        ('a', 'Fig2_B'), ('b', 'Fig3_B'), ('c', 'Fig4_C'), ('d', 'Fig5_I'),
+        ('a', 'ExtendedDataFigure2_A'), ('b', 'ExtendedDataFigure2_B'),
+        ('c', 'ExtendedDataFigure2_C'), ('d', 'ExtendedDataFigure2_D'),
     )),
 )
 METHOD_NOTE = (
@@ -71,11 +73,10 @@ def generated_section(tables: dict[str, list[list[str]]]) -> str:
     for name, title in TABLES.items():
         sections += [f'### {title}', f'[Download CSV](paper_plots/{name})', markdown_table(tables[name])]
     sections += ['### Final standalone panels',
-                 'Panel labels below follow the current manuscript assembly. Linked filenames '
-                 'retain their earlier working identifiers; PNG previews and editable PDF/SVG '
-                 'versions contain the same approved figure content. The current assembly uses '
-                 '16 of the 20 assets frozen in `v1.0.0`; the other four remain preserved in that '
-                 'release but are not part of the groupings below.']
+                 'Panel labels and linked filenames below match the current manuscript assembly. '
+                 'Each of the 16 current panels is supplied as a PNG preview and editable PDF/SVG. '
+                 'Redundant standalone titles have been removed because figure and panel context '
+                 'is supplied by the final composite layout.']
     for title, panels in MANUSCRIPT_PANEL_GROUPS:
         rows = ['| Manuscript panel | Preview | Editable PDF | Editable SVG |',
                 '| --- | --- | --- | --- |']
