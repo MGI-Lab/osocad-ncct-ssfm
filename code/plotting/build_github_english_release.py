@@ -15,8 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 START = '<!-- BEGIN APPROVED RESULTS -->'
 END = '<!-- END APPROVED RESULTS -->'
 TABLES = {
-    'table1_ai_performance.csv': 'Extended Data Table 1: AI diagnostic performance',
-    'table2_calcium_comparison.csv': 'Table 2: AI and calcium-score comparison',
+    'table1_ai_performance.csv': ('Extended Data Table 1: Diagnostic performance of the AI model '
+                                  'across development and validation cohorts.'),
+    'table2_calcium_comparison.csv': ('Table 2: Head-to-head comparison of the AI model versus '
+                                      'traditional calcium scoring.'),
 }
 FIGURE_ORDER = ([f'Fig2_{p}' for p in 'ABC'] + [f'Fig3_{p}' for p in 'ABCD']
                 + [f'Fig4_{p}' for p in 'ABCD'] + [f'Fig5_{p}' for p in 'ABCDEFGHI'])

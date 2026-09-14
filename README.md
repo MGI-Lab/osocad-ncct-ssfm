@@ -152,7 +152,7 @@ access. See [the submission checklist](docs/SUBMISSION_CHECKLIST.md).
 
 Point estimates are shown with 95% confidence intervals. AUC intervals use DeLong; individual binary-metric intervals use 1,000 percentile-bootstrap resamples. AUC comparisons use paired DeLong; sensitivity and specificity comparisons use two-sided exact McNemar tests; NPV differences use 10,000 paired-bootstrap resamples. Pooled external bootstrap resampling is stratified by institution. Significant comparisons are displayed as P < 0.05; exact P values remain in the aggregate statistics files. Non-significant P values are displayed to four decimal places, so 0.0912 corresponds to 0.091 when rounded to the manuscript's three decimal places.
 
-### Extended Data Table 1: AI diagnostic performance
+### Extended Data Table 1: Diagnostic performance of the AI model across development and validation cohorts.
 
 [Download CSV](paper_plots/table1_ai_performance.csv)
 
@@ -166,7 +166,7 @@ Point estimates are shown with 95% confidence intervals. AUC intervals use DeLon
 | PPV (%) | 66.7 (63.4 - 69.9) | 64.0 (57.6 - 71.0) | 76.1 (71.0 - 81.2) | 60.0 (50.5 - 68.2) | 71.4 (66.8 - 75.9) | 55.2 (48.1 - 62.7) | 60.2 (57.0 - 63.5) |
 | NPV (%) | 88.8 (87.0 - 90.5) | 87.7 (83.8 - 91.2) | 80.2 (74.6 - 85.4) | 88.0 (83.2 - 92.6) | 83.7 (80.3 - 87.2) | 93.1 (89.8 - 96.1) | 89.1 (87.5 - 90.7) |
 
-### Table 2: AI and calcium-score comparison
+### Table 2: Head-to-head comparison of the AI model versus traditional calcium scoring.
 
 [Download CSV](paper_plots/table2_calcium_comparison.csv)
 
