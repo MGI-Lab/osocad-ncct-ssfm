@@ -1,0 +1,54 @@
+name: Publish approved submission v1.0.0
+
+on:
+  push:
+    tags: ['v1.0.0']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: submission-release-v1.0.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'MGI-Lab/osocad-ncct-ssfm' && github.ref == 'refs/tags/v1.0.0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Retrieve the exact approved tag
+        env:
+          GIT_TERMINAL_PROMPT: '0'
+        run: |
+          git init checkout
+          git -C checkout remote add origin https://github.com/MGI-Lab/osocad-ncct-ssfm.git
+          git -C checkout fetch --no-tags origin refs/heads/main:refs/remotes/origin/main refs/tags/v1.0.0:refs/tags/v1.0.0
+          git -C checkout checkout --detach "$GITHUB_SHA"
+          test "$(git -C checkout rev-parse HEAD)" = "$(git -C checkout rev-parse 'v1.0.0^{commit}')"
+          git -C checkout merge-base --is-ancestor HEAD origin/main
+      - name: Validate the publication bundle
+        working-directory: checkout
+        run: |
+          python3 code/validation/verify_submission.py
+          python3 code/plotting/build_github_english_release.py --check
+          test -f tests/test_submission.py
+          test -f tests/test_release.py
+          python3 -m unittest discover -s tests -p test_submission.py -v
+          python3 -m unittest discover -s tests -p test_release.py -v
+      - name: Package only approved figures and tables
+        working-directory: checkout
+        run: |
+          python3 code/validation/package_release.py --output "$RUNNER_TEMP/submission_figures_tables_v1.0.0.zip"
+      - name: Publish formal GitHub Release
+        working-directory: checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v1.0.0 \
+            --repo MGI-Lab/osocad-ncct-ssfm \
+            --verify-tag --target "$GITHUB_SHA" --latest \
+            --title 'v1.0.0 — Manuscript submission snapshot' \
+            --notes-file docs/RELEASE_v1.0.0.md \
+            "$RUNNER_TEMP/submission_figures_tables_v1.0.0.zip#Final approved figures and tables"
+          gh release view v1.0.0 --repo MGI-Lab/osocad-ncct-ssfm --json url,isDraft,isPrerelease,tagName

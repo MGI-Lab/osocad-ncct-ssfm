@@ -33,10 +33,20 @@ and inspect the staged file list before publishing any update.
 ## History and other copies
 
 The current public history was rebuilt during an earlier privacy remediation.
+The public branch/tag history audited on 14 September 2026 contains no Excel
+workbooks. This is a statement about currently reachable commits, not about
+every upload that may have occurred before the history was rebuilt.
 That statement applies to this repository, not to every copy ever downloaded.
 Old clones, forks, cached commit views, pull-request references, workflow
 artifacts, and Git LFS storage require separate checks where applicable.
 Do not merge or push an old pre-remediation history back into the public branch.
+Collaborators should use a fresh clone of the cleaned public history for future
+publication work and retain restricted research materials only in approved
+institutional storage, outside that public checkout.
+
+Known former workbook download endpoints checked on 14 September 2026 returned
+HTTP 404. This is a time-bounded access check, not proof that all old copies or
+server-side objects have been deleted.
 
 If sensitive content is found, stop publication and report the finding to the
 repository maintainers and the responsible institutional data/privacy team.

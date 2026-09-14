@@ -4,6 +4,11 @@ This repository contains the model code, a packaged classifier checkpoint,
 approved aggregate result tables, and standalone publication panels.
 Patient-level study data are not included.
 
+No Excel workbooks are present in the current public tree or in the Git history
+reachable from its current public branches and tags (checked 14 September 2026).
+This describes the rebuilt public history, not a claim that no workbook was ever
+uploaded before the earlier history remediation. See [PRIVACY.md](PRIVACY.md).
+
 ## Submission results and reproducibility
 
 The approved aggregate CSVs in `paper_plots/` are the publication display source.
@@ -133,11 +138,13 @@ python code/plotting/export_manuscript_tables.py \
 ## Access, versioning, and citation
 
 Code is hosted at <https://github.com/MGI-Lab/osocad-ncct-ssfm>.
-Code Ocean is not used. Release publication, a version DOI, software licensing,
-and any controlled-data access commitment require the authors' approval;
-this repository does not invent those permissions or claim an unpublished DOI.
-Follow [the submission checklist](docs/SUBMISSION_CHECKLIST.md) before citing a
-new submission release.
+The submission version is `v1.0.0`; its publication status and downloadable assets
+are shown on the [GitHub Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.0).
+The version retains the approved final numerical results and 20 standalone panels.
+Code Ocean is not used. A version DOI, software licensing, and any controlled-data
+access commitment remain separate decisions requiring the authors' approval.
+This repository does not claim an unpublished DOI or grant institutional data
+access. See [the submission checklist](docs/SUBMISSION_CHECKLIST.md).
 
 <!-- BEGIN APPROVED RESULTS -->
 

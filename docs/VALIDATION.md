@@ -3,7 +3,9 @@
 This reviewed update is based on public commit
 `b00b22f3951eb9e56e374dd2925cd89e3f8c05cb`. Publication of the repository update,
 including replacement of the old panels with the final 20 panels, was approved
-on 14 September 2026. This is not a tagged release or a DOI archive.
+on 14 September 2026. The `v1.0.0` submission release is authorized separately
+and is built from these unchanged result assets. Its publication status is
+recorded on the repository's Release page. No DOI archive is claimed.
 The update does not use Code Ocean.
 
 ## Checks completed
@@ -20,10 +22,18 @@ The update does not use Code Ocean.
   Checksum corruption, a missing figure, and an unreviewed extra result file
   are each rejected by regression tests. A source archive without `.git` also
   passes the bundle check.
-- All 32 unit tests pass in Python 3.10.12 with the pinned validation packages.
+- Before release-packaging tests were added, all 32 unit tests passed in Python
+  3.10.12 with the pinned validation packages.
   The same 32 tests also pass with NumPy 2.2.6, pandas 2.3.3, SciPy 1.15.3,
   scikit-learn 1.7.2, and openpyxl 3.1.5. The second environment is a numerical
   compatibility check, not a repeat of clinical experiments or figure rendering.
+- Release preparation adds nine standard-library packaging tests. The complete
+  41-test suite passes in Python 3.10 with the pinned validation packages. The
+  tag-triggered workflow runs the 14 submission tests and nine packaging tests;
+  it does not rerun the dependency-based statistical suite or clinical analyses.
+  Packaging verifies the 70 approved assets plus their manifest, rejects an
+  existing output file and workbook-containing reachable history, and produces
+  byte-identical archives on two runs in the same tested environment.
 - Statistical tests use explicitly synthetic fixtures, including an independent
   paired NPV bootstrap calculation with nonidentical predictions and
   institution-stratified resampling. Export tests use approved aggregate tables.
@@ -45,6 +55,6 @@ Privacy checks do not establish deletion from GitHub's internal caches, other
 people's clones, previous downloads, or backups. They are not a model memorization
 audit or a substitute for institutional approval of the publication assets.
 
-The update does not create a release, DOI, software license, or data access
+The submission release does not create a DOI, software license, or data access
 agreement. Those separate decisions still require author and, where applicable,
 institutional approval. See [the submission checklist](SUBMISSION_CHECKLIST.md).

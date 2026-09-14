@@ -19,8 +19,9 @@ and, after author approval, a version-specific Zenodo archive.
 
 ## Freeze and archive
 
-- Once approved, create a submission tag/release such as `v1.0.0-submission` on
-  the reviewed commit. The name here is a proposal, not an existing release.
+- The approved submission version is `v1.0.0`. Its tag triggers a bounded
+  publication workflow after validation; check the [Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.0)
+  for the published status and attached figures/tables.
 - Record the commit, asset manifest, method settings, and verification report.
   Do not move the submitted tag to a later commit; use a new version for revisions.
 - Archive only the approved publication files in Zenodo. Inspect the archive's
@@ -30,8 +31,10 @@ and, after author approval, a version-specific Zenodo archive.
   exists. A repository URL is not a DOI, and no DOI is claimed by this update.
 
 See [Zenodo's software archiving guide](https://help.zenodo.org/docs/github/archive-software/).
-Creating a public release or archive is a separate publication action and is not
-performed by the validation commands.
+The release workflow runs only for the `v1.0.0` tag, uses the repository's automatic
+token with `contents: write`, and publishes only after validation. It does not
+create a DOI, move an existing tag, or replace existing release assets. Validation
+commands alone do not publish anything. Future versions require a new review.
 
 ## Submission form
 
