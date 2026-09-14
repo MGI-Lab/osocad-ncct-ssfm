@@ -28,8 +28,10 @@ The update does not use Code Ocean.
   scikit-learn 1.7.2, and openpyxl 3.1.5. The second environment is a numerical
   compatibility check, not a repeat of clinical experiments or figure rendering.
 - Release preparation adds nine standard-library packaging tests. The complete
-  41-test suite passes in Python 3.10 with the pinned validation packages. The
-  tag-triggered workflow runs the 14 submission tests and nine packaging tests;
+  41-test suite passed for `v1.0.0` in Python 3.10 with the pinned validation
+  packages. The current README regrouping adds one presentation-mapping test,
+  bringing the current suite to 42 tests. The frozen `v1.0.0` tag-triggered
+  workflow ran the then-current 14 submission tests and nine packaging tests;
   it does not rerun the dependency-based statistical suite or clinical analyses.
   Packaging verifies the 70 approved assets plus their manifest, rejects an
   existing output file and workbook-containing reachable history, and produces

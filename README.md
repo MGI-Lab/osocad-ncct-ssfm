@@ -190,30 +190,38 @@ Point estimates are shown with 95% confidence intervals. AUC intervals use DeLon
 
 ### Final standalone panels
 
-Panel filenames retain the working figure numbering; they are not a new numbering scheme for the assembled manuscript. PNG previews and editable PDF/SVG versions contain the same approved figure content.
+Panel labels below follow the current manuscript assembly. Linked filenames retain their earlier working identifiers; PNG previews and editable PDF/SVG versions contain the same approved figure content. The current assembly uses 16 of the 20 assets frozen in `v1.0.0`; the other four remain preserved in that release but are not part of the groupings below.
 
-| Panel | Preview | Editable PDF | Editable SVG |
+#### Figure 2
+
+| Manuscript panel | Preview | Editable PDF | Editable SVG |
 | --- | --- | --- | --- |
-| Fig2_A | [PNG](paper_plots/Fig2_A.png) | [PDF](paper_plots/Fig2_A.pdf) | [SVG](paper_plots/Fig2_A.svg) |
-| Fig2_B | [PNG](paper_plots/Fig2_B.png) | [PDF](paper_plots/Fig2_B.pdf) | [SVG](paper_plots/Fig2_B.svg) |
-| Fig2_C | [PNG](paper_plots/Fig2_C.png) | [PDF](paper_plots/Fig2_C.pdf) | [SVG](paper_plots/Fig2_C.svg) |
-| Fig3_A | [PNG](paper_plots/Fig3_A.png) | [PDF](paper_plots/Fig3_A.pdf) | [SVG](paper_plots/Fig3_A.svg) |
-| Fig3_B | [PNG](paper_plots/Fig3_B.png) | [PDF](paper_plots/Fig3_B.pdf) | [SVG](paper_plots/Fig3_B.svg) |
-| Fig3_C | [PNG](paper_plots/Fig3_C.png) | [PDF](paper_plots/Fig3_C.pdf) | [SVG](paper_plots/Fig3_C.svg) |
-| Fig3_D | [PNG](paper_plots/Fig3_D.png) | [PDF](paper_plots/Fig3_D.pdf) | [SVG](paper_plots/Fig3_D.svg) |
-| Fig4_A | [PNG](paper_plots/Fig4_A.png) | [PDF](paper_plots/Fig4_A.pdf) | [SVG](paper_plots/Fig4_A.svg) |
-| Fig4_B | [PNG](paper_plots/Fig4_B.png) | [PDF](paper_plots/Fig4_B.pdf) | [SVG](paper_plots/Fig4_B.svg) |
-| Fig4_C | [PNG](paper_plots/Fig4_C.png) | [PDF](paper_plots/Fig4_C.pdf) | [SVG](paper_plots/Fig4_C.svg) |
-| Fig4_D | [PNG](paper_plots/Fig4_D.png) | [PDF](paper_plots/Fig4_D.pdf) | [SVG](paper_plots/Fig4_D.svg) |
-| Fig5_A | [PNG](paper_plots/Fig5_A.png) | [PDF](paper_plots/Fig5_A.pdf) | [SVG](paper_plots/Fig5_A.svg) |
-| Fig5_B | [PNG](paper_plots/Fig5_B.png) | [PDF](paper_plots/Fig5_B.pdf) | [SVG](paper_plots/Fig5_B.svg) |
-| Fig5_C | [PNG](paper_plots/Fig5_C.png) | [PDF](paper_plots/Fig5_C.pdf) | [SVG](paper_plots/Fig5_C.svg) |
-| Fig5_D | [PNG](paper_plots/Fig5_D.png) | [PDF](paper_plots/Fig5_D.pdf) | [SVG](paper_plots/Fig5_D.svg) |
-| Fig5_E | [PNG](paper_plots/Fig5_E.png) | [PDF](paper_plots/Fig5_E.pdf) | [SVG](paper_plots/Fig5_E.svg) |
-| Fig5_F | [PNG](paper_plots/Fig5_F.png) | [PDF](paper_plots/Fig5_F.pdf) | [SVG](paper_plots/Fig5_F.svg) |
-| Fig5_G | [PNG](paper_plots/Fig5_G.png) | [PDF](paper_plots/Fig5_G.pdf) | [SVG](paper_plots/Fig5_G.svg) |
-| Fig5_H | [PNG](paper_plots/Fig5_H.png) | [PDF](paper_plots/Fig5_H.pdf) | [SVG](paper_plots/Fig5_H.svg) |
-| Fig5_I | [PNG](paper_plots/Fig5_I.png) | [PDF](paper_plots/Fig5_I.pdf) | [SVG](paper_plots/Fig5_I.svg) |
+| a | [PNG](paper_plots/Fig2_A.png) | [PDF](paper_plots/Fig2_A.pdf) | [SVG](paper_plots/Fig2_A.svg) |
+| b | [PNG](paper_plots/Fig3_A.png) | [PDF](paper_plots/Fig3_A.pdf) | [SVG](paper_plots/Fig3_A.svg) |
+| c | [PNG](paper_plots/Fig3_D.png) | [PDF](paper_plots/Fig3_D.pdf) | [SVG](paper_plots/Fig3_D.svg) |
+| d | [PNG](paper_plots/Fig4_A.png) | [PDF](paper_plots/Fig4_A.pdf) | [SVG](paper_plots/Fig4_A.svg) |
+| e | [PNG](paper_plots/Fig5_E.png) | [PDF](paper_plots/Fig5_E.pdf) | [SVG](paper_plots/Fig5_E.svg) |
+| f | [PNG](paper_plots/Fig5_F.png) | [PDF](paper_plots/Fig5_F.pdf) | [SVG](paper_plots/Fig5_F.svg) |
+
+#### Figure 3
+
+| Manuscript panel | Preview | Editable PDF | Editable SVG |
+| --- | --- | --- | --- |
+| a | [PNG](paper_plots/Fig5_A.png) | [PDF](paper_plots/Fig5_A.pdf) | [SVG](paper_plots/Fig5_A.svg) |
+| b | [PNG](paper_plots/Fig5_B.png) | [PDF](paper_plots/Fig5_B.pdf) | [SVG](paper_plots/Fig5_B.svg) |
+| c | [PNG](paper_plots/Fig5_C.png) | [PDF](paper_plots/Fig5_C.pdf) | [SVG](paper_plots/Fig5_C.svg) |
+| d | [PNG](paper_plots/Fig5_D.png) | [PDF](paper_plots/Fig5_D.pdf) | [SVG](paper_plots/Fig5_D.svg) |
+| e | [PNG](paper_plots/Fig5_G.png) | [PDF](paper_plots/Fig5_G.pdf) | [SVG](paper_plots/Fig5_G.svg) |
+| f | [PNG](paper_plots/Fig5_H.png) | [PDF](paper_plots/Fig5_H.pdf) | [SVG](paper_plots/Fig5_H.svg) |
+
+#### Extended Data Figure 2
+
+| Manuscript panel | Preview | Editable PDF | Editable SVG |
+| --- | --- | --- | --- |
+| a | [PNG](paper_plots/Fig2_B.png) | [PDF](paper_plots/Fig2_B.pdf) | [SVG](paper_plots/Fig2_B.svg) |
+| b | [PNG](paper_plots/Fig3_B.png) | [PDF](paper_plots/Fig3_B.pdf) | [SVG](paper_plots/Fig3_B.svg) |
+| c | [PNG](paper_plots/Fig4_C.png) | [PDF](paper_plots/Fig4_C.pdf) | [SVG](paper_plots/Fig4_C.svg) |
+| d | [PNG](paper_plots/Fig5_I.png) | [PDF](paper_plots/Fig5_I.pdf) | [SVG](paper_plots/Fig5_I.svg) |
 
 [Exact aggregate statistics](paper_plots/submission_sources/) · [File checksums](paper_plots/submission_manifest.json)
 

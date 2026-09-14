@@ -46,6 +46,28 @@ class DisplayTests(unittest.TestCase):
         self.assertEqual(first.count('<img '), 20)
         self.assertIn('Fig5_I.png', first)
 
+    def test_readme_panels_follow_current_manuscript_assembly(self):
+        section = builder.generated_section(builder.read_tables(ROOT))
+        expected = (
+            ('Figure 2', (('a', 'Fig2_A'), ('b', 'Fig3_A'), ('c', 'Fig3_D'),
+                          ('d', 'Fig4_A'), ('e', 'Fig5_E'), ('f', 'Fig5_F'))),
+            ('Figure 3', (('a', 'Fig5_A'), ('b', 'Fig5_B'), ('c', 'Fig5_C'),
+                          ('d', 'Fig5_D'), ('e', 'Fig5_G'), ('f', 'Fig5_H'))),
+            ('Extended Data Figure 2', (('a', 'Fig2_B'), ('b', 'Fig3_B'),
+                                        ('c', 'Fig4_C'), ('d', 'Fig5_I'))),
+        )
+        self.assertEqual(builder.MANUSCRIPT_PANEL_GROUPS, expected)
+        self.assertEqual(section.count('[PNG]('), 16)
+        self.assertEqual(len({source for _, rows in expected for _, source in rows}), 16)
+        for title, rows in expected:
+            self.assertIn(f'#### {title}', section)
+            for label, source in rows:
+                self.assertIn(f'| {label} | [PNG](paper_plots/{source}.png)', section)
+        for unused in ['Fig2_C', 'Fig3_C', 'Fig4_B', 'Fig4_D']:
+            self.assertNotIn(f'paper_plots/{unused}.png', section)
+        self.assertNotIn('Receiver operating characteristic', section)
+        self.assertNotIn('Predicted probability distributions', section)
+
     def test_modified_value_changes_both_displays(self):
         tables = builder.read_tables(ROOT)
         before_html, before_md = builder.render_index(tables), builder.generated_section(tables)

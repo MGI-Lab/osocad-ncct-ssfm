@@ -20,6 +20,19 @@ TABLES = {
 }
 FIGURE_ORDER = ([f'Fig2_{p}' for p in 'ABC'] + [f'Fig3_{p}' for p in 'ABCD']
                 + [f'Fig4_{p}' for p in 'ABCD'] + [f'Fig5_{p}' for p in 'ABCDEFGHI'])
+MANUSCRIPT_PANEL_GROUPS = (
+    ('Figure 2', (
+        ('a', 'Fig2_A'), ('b', 'Fig3_A'), ('c', 'Fig3_D'),
+        ('d', 'Fig4_A'), ('e', 'Fig5_E'), ('f', 'Fig5_F'),
+    )),
+    ('Figure 3', (
+        ('a', 'Fig5_A'), ('b', 'Fig5_B'), ('c', 'Fig5_C'),
+        ('d', 'Fig5_D'), ('e', 'Fig5_G'), ('f', 'Fig5_H'),
+    )),
+    ('Extended Data Figure 2', (
+        ('a', 'Fig2_B'), ('b', 'Fig3_B'), ('c', 'Fig4_C'), ('d', 'Fig5_I'),
+    )),
+)
 METHOD_NOTE = (
     'Point estimates are shown with 95% confidence intervals. AUC intervals use '
     'DeLong; individual binary-metric intervals use 1,000 percentile-bootstrap '
@@ -55,16 +68,20 @@ def generated_section(tables: dict[str, list[list[str]]]) -> str:
     sections = [START, '## Approved aggregate results', METHOD_NOTE]
     for name, title in TABLES.items():
         sections += [f'### {title}', f'[Download CSV](paper_plots/{name})', markdown_table(tables[name])]
-    figure_rows = ['| Panel | Preview | Editable PDF | Editable SVG |', '| --- | --- | --- | --- |']
-    for panel in FIGURE_ORDER:
-        figure_rows.append(f'| {panel} | [PNG](paper_plots/{panel}.png) | '
-                           f'[PDF](paper_plots/{panel}.pdf) | [SVG](paper_plots/{panel}.svg) |')
     sections += ['### Final standalone panels',
-                 'Panel filenames retain the working figure numbering; they are not a new '
-                 'numbering scheme for the assembled manuscript. PNG previews and editable '
-                 'PDF/SVG versions contain the same approved figure content.',
-                 '\n'.join(figure_rows),
-                 '[Exact aggregate statistics](paper_plots/submission_sources/) · '
+                 'Panel labels below follow the current manuscript assembly. Linked filenames '
+                 'retain their earlier working identifiers; PNG previews and editable PDF/SVG '
+                 'versions contain the same approved figure content. The current assembly uses '
+                 '16 of the 20 assets frozen in `v1.0.0`; the other four remain preserved in that '
+                 'release but are not part of the groupings below.']
+    for title, panels in MANUSCRIPT_PANEL_GROUPS:
+        rows = ['| Manuscript panel | Preview | Editable PDF | Editable SVG |',
+                '| --- | --- | --- | --- |']
+        for label, source in panels:
+            rows.append(f'| {label} | [PNG](paper_plots/{source}.png) | '
+                        f'[PDF](paper_plots/{source}.pdf) | [SVG](paper_plots/{source}.svg) |')
+        sections += [f'#### {title}', '\n'.join(rows)]
+    sections += ['[Exact aggregate statistics](paper_plots/submission_sources/) · '
                  '[File checksums](paper_plots/submission_manifest.json)', END]
     return '\n\n'.join(sections)
 

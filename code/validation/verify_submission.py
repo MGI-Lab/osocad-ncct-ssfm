@@ -75,6 +75,15 @@ def check_bundle(root: Path) -> dict:
     check(len(entries) == len(set(expected_paths)), 'No duplicate manifest paths')
     check({Path(row['path']).name for row in manifest['aggregate_statistics']} == SOURCE_NAMES, 'Aggregate source allowlist')
     check([row['panel'] for row in manifest['figures']] == builder.FIGURE_ORDER, 'All 20 approved panels present in order')
+    groups = builder.MANUSCRIPT_PANEL_GROUPS
+    manuscript_panels = [source for _, panels in groups for _, source in panels]
+    check([title for title, _ in groups] == ['Figure 2', 'Figure 3', 'Extended Data Figure 2'],
+          'Current manuscript figure groups present in order')
+    check([''.join(label for label, _ in panels) for _, panels in groups] == ['abcdef', 'abcdef', 'abcd'],
+          'Current manuscript panel labels present in order')
+    check(len(manuscript_panels) == len(set(manuscript_panels)) == 16
+          and set(manuscript_panels) <= set(builder.FIGURE_ORDER),
+          'Current manuscript uses 16 unique approved panels')
     for entry in entries:
         path = safe_path(root, entry['path'])
         check(path.is_file(), f'Exists: {entry["path"]}')
