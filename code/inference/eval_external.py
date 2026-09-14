@@ -18,6 +18,8 @@ from model import ThymomaTransformerClassifier
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PACKAGE_ROOT / "code" / "metrics"))
+from diagnostic_statistics import require_analysis_output
 DATA_ROOT = PACKAGE_ROOT / "data" / "external" / "images"
 JSON_ROOT = PACKAGE_ROOT / "data" / "external" / "json"
 DEFAULT_EVAL_SETS = [
@@ -123,6 +125,7 @@ def predict_dataset(model, data_root, json_path, image_size, max_slices, batch_s
 
 
 def compute_metrics(y_true, y_pred, probs):
+    """Point-only checkpoint diagnostic; use the table exporter for CI reanalysis."""
     acc = accuracy_score(y_true, y_pred)
     auc = roc_auc_score(y_true, probs[:, 1])
     cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
@@ -160,6 +163,7 @@ def save_predictions(path, result):
 
 def main():
     args = parse_args()
+    args.result_dir = str(require_analysis_output(args.result_dir, PACKAGE_ROOT))
     os.makedirs(args.result_dir, exist_ok=True)
     device = torch.device(args.device)
 

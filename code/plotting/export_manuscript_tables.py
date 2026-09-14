@@ -1,4 +1,5 @@
 import argparse
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +11,8 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PACKAGE_ROOT / "code" / "metrics"))
+from diagnostic_statistics import delong_auc_covariance, require_analysis_output
 
 
 COHORT_COLUMNS = [
@@ -70,16 +73,14 @@ def format_estimate(value, low, high, percent=False):
 
 def format_pvalue(p):
     if not np.isfinite(p):
-        return "p = NA"
+        return "P = NA"
     if p < 0.05:
-        return "p < 0.05"
-    return "ns"
+        return "P < 0.05"
+    return f"P = {p:.4f}".rstrip("0").rstrip(".")
 
 
 def format_pvalue_excel(p):
-    if not np.isfinite(p):
-        return "p = NA"
-    return f"p = {p:.6g} ({format_pvalue(p)})"
+    return format_pvalue(p)
 
 
 def delong_auc_variance(y_true, y_score):
@@ -109,34 +110,12 @@ def delong_auc_variance(y_true, y_score):
 
 
 def delong_test(y_true, score1, score2):
-    y_true = np.asarray(y_true)
-    score1 = np.asarray(score1)
-    score2 = np.asarray(score2)
-    auc1, var1 = delong_auc_variance(y_true, score1)
-    auc2, var2 = delong_auc_variance(y_true, score2)
-    n_pos = np.sum(y_true == 1)
-    n_neg = np.sum(y_true == 0)
-    pos1, neg1 = score1[y_true == 1], score1[y_true == 0]
-    pos2, neg2 = score2[y_true == 1], score2[y_true == 0]
-
-    cov_pos = 0.0
-    for i in range(n_pos):
-        v10_1 = (np.sum(neg1 < pos1[i]) + 0.5 * np.sum(neg1 == pos1[i])) / n_neg
-        v10_2 = (np.sum(neg2 < pos2[i]) + 0.5 * np.sum(neg2 == pos2[i])) / n_neg
-        cov_pos += (v10_1 - auc1) * (v10_2 - auc2)
-    cov_pos = cov_pos / (n_pos - 1) if n_pos > 1 else 0
-
-    cov_neg = 0.0
-    for i in range(n_neg):
-        v01_1 = (np.sum(pos1 > neg1[i]) + 0.5 * np.sum(pos1 == neg1[i])) / n_pos
-        v01_2 = (np.sum(pos2 > neg2[i]) + 0.5 * np.sum(pos2 == neg2[i])) / n_pos
-        cov_neg += (v01_1 - auc1) * (v01_2 - auc2)
-    cov_neg = cov_neg / (n_neg - 1) if n_neg > 1 else 0
-
-    cov_total = cov_pos / n_pos + cov_neg / n_neg
-    se = np.sqrt(var1 + var2 - 2 * cov_total)
-    z = (auc1 - auc2) / se if se > 0 else 0
-    return 2 * (1 - norm.cdf(abs(z)))
+    aucs, covariance = delong_auc_covariance(y_true, np.vstack([score1, score2]))
+    difference = float(aucs[0] - aucs[1])
+    variance = max(float(covariance[0, 0] + covariance[1, 1] - 2 * covariance[0, 1]), 0.0)
+    if variance == 0:
+        return 1.0 if difference == 0 else 0.0
+    return float(2 * norm.sf(abs(difference) / np.sqrt(variance)))
 
 
 def mcnemar_exact_pvalue(y_true, pred_a, pred_b, mask=None):
@@ -453,29 +432,24 @@ def style_workbook(path):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--report-dir", type=Path, default=PACKAGE_ROOT / "reports" / "case_results")
+    parser = argparse.ArgumentParser(description="Export frozen public tables to Excel; no clinical statistics are recomputed.")
+    parser.add_argument("--output-xlsx", type=Path, default=PACKAGE_ROOT / "outputs" / "frozen_tables" / "manuscript_tables_ai_calcium.xlsx")
     args = parser.parse_args()
-    report_dir = args.report_dir
-    metrics_df_raw = pd.read_csv(report_dir / "metrics_summary_raw.csv")
-    calcium_xlsx = report_dir / "paper_plots" / "calcium_ai_comparison_plot_data_aligned.xlsx"
-    calcium_metrics = pd.read_excel(calcium_xlsx, sheet_name="Metrics used for plots")
-    metrics_df = align_ai_metrics_with_comparison(metrics_df_raw, calcium_metrics)
-    external_cases = pd.read_excel(calcium_xlsx, sheet_name="External matched cases")
-    prospective_cases = pd.read_excel(calcium_xlsx, sheet_name="Prospective matched cases")
-
-    table1 = build_table1(metrics_df)
-    table2 = build_table2(calcium_metrics, external_cases, prospective_cases)
-    pvalue_table = build_pvalue_table(external_cases, prospective_cases)
-
-    output = report_dir / "manuscript_tables_ai_calcium.xlsx"
+    output = require_analysis_output(args.output_xlsx, PACKAGE_ROOT)
+    # Publication export is deliberately independent of private case workbooks.
+    table1 = pd.read_csv(PACKAGE_ROOT / "paper_plots" / "table1_ai_performance.csv", dtype=str, keep_default_na=False)
+    table2 = pd.read_csv(PACKAGE_ROOT / "paper_plots" / "table2_calcium_comparison.csv", dtype=str, keep_default_na=False)
+    output.parent.mkdir(parents=True, exist_ok=True)
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         table1.to_excel(writer, sheet_name="Table 1 AI performance", index=False)
         table2.to_excel(writer, sheet_name="Table 2 Calcium comparison", index=False)
-        pvalue_table.to_excel(writer, sheet_name="Calcium p values", index=False)
-        metrics_df.to_excel(writer, sheet_name="Source AI metrics", index=False)
-        calcium_metrics.to_excel(writer, sheet_name="Source calcium metrics", index=False)
-        metrics_df_raw.to_excel(writer, sheet_name="Raw inference AI metrics", index=False)
+        pd.DataFrame([
+            {"Item": "Source", "Value": "Frozen paper_plots/table1_ai_performance.csv and table2_calcium_comparison.csv"},
+            {"Item": "AUC CI/comparison", "Value": "DeLong / paired DeLong"},
+            {"Item": "Binary CI", "Value": "Percentile bootstrap, 1000 resamples"},
+            {"Item": "NPV comparison", "Value": "Paired bootstrap, 10000 resamples; external cohorts institution-stratified"},
+            {"Item": "Reanalysis", "Value": "Not performed by this export; no private observations are included"},
+        ]).to_excel(writer, sheet_name="Analysis methods", index=False)
     style_workbook(output)
     print(output)
 

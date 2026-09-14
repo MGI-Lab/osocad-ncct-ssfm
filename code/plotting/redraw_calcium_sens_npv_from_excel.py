@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Redraw calcium-score Sensitivity/NPV bar figures from the final Excel table.
+"""Create isolated legacy-style previews from an explicitly supplied Excel table.
 
 The bar heights and p-value labels are read directly from the
-"Table 2 Calcium comparison" sheet so the figure text matches the workbook.
+"Table 2 Calcium comparison" sheet. This is not the frozen submission exporter;
+it never updates paper_plots, the input workbook, or the public HTML.
 """
 
 from __future__ import annotations
 
 import os
+import argparse
 import re
+import sys
 from pathlib import Path
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib-sh-rj")
@@ -24,6 +27,8 @@ from PIL import Image as PILImage
 
 
 PACKAGE_DIR = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PACKAGE_DIR / "code" / "metrics"))
+from diagnostic_statistics import require_analysis_output
 CASE_RESULTS_DIR = PACKAGE_DIR / "reports" / "case_results"
 FINAL_EXCEL = Path(
     os.environ.get("RESULTS_WORKBOOK", PACKAGE_DIR / "results_workbook.xlsx")
@@ -74,16 +79,18 @@ def parse_metric_percent(value) -> float:
 def parse_p_display(value) -> str:
     """Return the exact p-value display tier used by figures."""
     text = "" if value is None else str(value)
-    if re.search(r"\bns\b", text):
-        return "ns"
-    less_than = re.search(r"p\s*<\s*([0-9.eE+-]+)", text)
+    less_than = re.search(r"p\s*<\s*([0-9.eE+-]+)", text, flags=re.I)
     if less_than:
-        return "p < 0.05" if float(less_than.group(1)) < 0.05 else "ns"
-    match = re.search(r"p\s*=\s*([0-9.eE+-]+)", text)
+        if float(less_than.group(1)) <= 0.05:
+            return "P < 0.05"
+        raise ValueError("An upper bound above 0.05 cannot determine significance")
+    match = re.search(r"p\s*=\s*([0-9.eE+-]+)", text, flags=re.I)
     if match:
         p = float(match.group(1))
         if p < 0.05:
-            return "p < 0.05"
+            return "P < 0.05"
+        return f"P = {p:.4f}".rstrip("0").rstrip(".")
+    if re.search(r"\bns\b", text, flags=re.I):
         return "ns"
     raise ValueError(f"Cannot parse p-value display from {value!r}.")
 
@@ -101,7 +108,7 @@ def find_section_rows(ws, section_label: str) -> dict[str, int]:
     metric_rows = {}
     for row in range(start_row + 1, ws.max_row + 1):
         label = ws.cell(row, 1).value
-        if label in ("External Validation Cohorts", "Prospective Cohort") and row != start_row:
+        if label and str(label).startswith(("External Validation Cohorts", "Prospective Cohort", "Real-world Cohort")):
             break
         if label:
             metric_rows[str(label)] = row
@@ -116,6 +123,9 @@ def load_plot_data(excel_path: Path):
         ("External Validation Cohorts", "External Validation Sensitivity and NPV"),
         ("Prospective Cohort", "Prospective Comparison"),
     ]
+    for row in ws.iter_rows(values_only=True):
+        if row and str(row[0]).startswith("Real-world Cohort"):
+            sections.append((str(row[0]), "Real-world Sensitivity and NPV"))
     method_cols = {
         "AI Model": 2,
         "Non-gated Agatston": 3,
@@ -161,7 +171,7 @@ def beautify_axis(ax):
 
 
 def draw_sig_bracket(ax, x1, x2, y, text, h=2.2):
-    is_significant = text not in ("ns", "p = NA")
+    is_significant = text == "P < 0.05"
     text_color = "#2fb596" if is_significant else "#222222"
     text_weight = "bold" if is_significant else "normal"
     ax.plot([x1, x1, x2, x2], [y, y + h, y + h, y], lw=1.3, color="#555555", clip_on=False)
@@ -283,7 +293,12 @@ def rebuild_html():
 
 
 def main():
-    data = load_plot_data(FINAL_EXCEL)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--workbook", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, default=PACKAGE_DIR / "outputs" / "plot_previews")
+    args = parser.parse_args()
+    output_dir = require_analysis_output(args.output_dir, PACKAGE_DIR)
+    data = load_plot_data(args.workbook)
     output_specs = [
         (
             "External Validation Cohorts",
@@ -295,16 +310,16 @@ def main():
         ("Prospective Cohort", ["fig5b.png"]),
     ]
 
-    for output_dir in [PACKAGE_DIR / "paper_plots", CASE_RESULTS_DIR / "paper_plots"]:
-        for section, filenames in output_specs:
-            for filename in filenames:
-                draw_bar_figure(data[section], output_dir / filename)
-                print(f"Saved {output_dir / filename}")
+    for section in data:
+        if section.startswith("Real-world Cohort"):
+            output_specs.append((section, ["real_world_sens_npv_preview.png"]))
+    for section, filenames in output_specs:
+        for filename in filenames:
+            draw_bar_figure(data[section], output_dir / filename)
+            print(f"Saved preview {output_dir / filename}")
 
-    refresh_figures_sheet(FINAL_EXCEL, PACKAGE_DIR / "paper_plots")
-    rebuild_html()
-
-    print("Source workbook:", FINAL_EXCEL)
+    print("Preview only; frozen submission figures and source workbook are unchanged.")
+    print("Source workbook:", args.workbook)
     for section, section_data in data.items():
         print(section)
         for method in COMPARISON_NAMES:

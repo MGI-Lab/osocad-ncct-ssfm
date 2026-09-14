@@ -1,0 +1,7 @@
+Cohort,Metric,Comparison,p,Difference AI - comparator,Difference 95% CI Low,Difference 95% CI High,Test,Holm-adjusted p (4 tests within cohort)
+Real-world Cohort,Sensitivity,AI Model vs Non-gated Agatston,8.3828059005535723e-66,0.32507288629737607,,,two-sided exact McNemar,3.3531223602214289e-65
+Real-world Cohort,Specificity,AI Model vs Non-gated Agatston,2.3174604957625902e-73,-0.15393654524089306,,,two-sided exact McNemar,
+Real-world Cohort,NPV,AI Model vs Non-gated Agatston,9.9990000999900015e-05,0.084496931359827609,0.071435211834300766,0.097520557814188794,two-sided paired bootstrap difference (10000; seed=42),0.00019998000199980003
+Real-world Cohort,Sensitivity,AI Model vs Gated Agatston,3.3028941070359494e-06,0.065597667638483959,,,two-sided exact McNemar,9.9086823211078487e-06
+Real-world Cohort,Specificity,AI Model vs Gated Agatston,1.6865250492959473e-24,-0.078143360752056412,,,two-sided exact McNemar,
+Real-world Cohort,NPV,AI Model vs Gated Agatston,0.0040995900409959004,0.014976710415397609,0.0048285292051967969,0.025632186669095242,two-sided paired bootstrap difference (10000; seed=42),0.0040995900409959004

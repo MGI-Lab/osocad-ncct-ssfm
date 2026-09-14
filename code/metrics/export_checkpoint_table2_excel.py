@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-import math
 import re
 import sys
 from collections import OrderedDict
@@ -15,15 +14,16 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import confusion_matrix, roc_auc_score
 from torch.utils.data import DataLoader
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PACKAGE_ROOT / "code" / "metrics"))
+from diagnostic_statistics import compute_diagnostic_metrics, require_analysis_output
 DEFAULT_MODEL_PATH = PACKAGE_ROOT / "models" / "best.pth"
 DEFAULT_RUN_DIR = PACKAGE_ROOT / "models"
 DEFAULT_CODE_DIR = PACKAGE_ROOT / "code" / "training"
-DEFAULT_OUTPUT_XLSX = PACKAGE_ROOT / "metrics" / "table2_inference_all_cohorts.xlsx"
+DEFAULT_OUTPUT_XLSX = PACKAGE_ROOT / "outputs" / "reanalysis" / "table2_inference_all_cohorts.xlsx"
 DEFAULT_EXTERNAL_JSON_ROOT = PACKAGE_ROOT / "data" / "external" / "json"
 DEFAULT_EXTERNAL_IMAGE_ROOT = PACKAGE_ROOT / "data" / "external" / "images"
 DEFAULT_PROSPECTIVE_ROOT = PACKAGE_ROOT / "data" / "prospective"
@@ -164,88 +164,15 @@ def predict_cohort(
     return pd.DataFrame(rows)
 
 
-def wilson_ci(successes: int, total: int, z: float = 1.959963984540054) -> tuple[float, float]:
-    if total <= 0:
-        return (float("nan"), float("nan"))
-    p = successes / total
-    denom = 1.0 + z * z / total
-    center = (p + z * z / (2.0 * total)) / denom
-    half = z * math.sqrt((p * (1.0 - p) / total) + (z * z / (4.0 * total * total))) / denom
-    return (max(0.0, center - half), min(1.0, center + half))
-
-
-def auc_hanley_mcneil_ci(y_true: np.ndarray, y_score: np.ndarray, z: float = 1.959963984540054) -> tuple[float, float]:
-    auc = float(roc_auc_score(y_true, y_score))
-    n_pos = int(np.sum(y_true == 1))
-    n_neg = int(np.sum(y_true == 0))
-    if n_pos == 0 or n_neg == 0:
-        return (float("nan"), float("nan"))
-    q1 = auc / (2.0 - auc)
-    q2 = 2.0 * auc * auc / (1.0 + auc)
-    var = (
-        auc * (1.0 - auc)
-        + (n_pos - 1) * (q1 - auc * auc)
-        + (n_neg - 1) * (q2 - auc * auc)
-    ) / (n_pos * n_neg)
-    se = math.sqrt(max(var, 0.0))
-    return (max(0.0, auc - z * se), min(1.0, auc + z * se))
-
-
-def balanced_acc_ci(sens: float, spec: float, sens_total: int, spec_total: int, z: float = 1.959963984540054) -> tuple[float, float]:
-    if sens_total <= 0 or spec_total <= 0:
-        return (float("nan"), float("nan"))
-    var_sens = sens * (1.0 - sens) / sens_total
-    var_spec = spec * (1.0 - spec) / spec_total
-    se = 0.5 * math.sqrt(var_sens + var_spec)
-    ba = 0.5 * (sens + spec)
-    return (max(0.0, ba - z * se), min(1.0, ba + z * se))
-
-
 def compute_metrics(df: pd.DataFrame) -> dict[str, object]:
-    y_true = df["y_true"].to_numpy(dtype=np.int64)
-    y_pred = df["y_pred"].to_numpy(dtype=np.int64)
-    y_score = df["prob_class1"].to_numpy(dtype=float)
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
-    n = int(len(df))
-    sens_total = int(tp + fn)
-    spec_total = int(tn + fp)
-    ppv_total = int(tp + fp)
-    npv_total = int(tn + fn)
-    sens = tp / sens_total if sens_total else float("nan")
-    spec = tn / spec_total if spec_total else float("nan")
-    acc = (tp + tn) / n if n else float("nan")
-    ba = 0.5 * (sens + spec)
-    ppv = tp / ppv_total if ppv_total else float("nan")
-    npv = tn / npv_total if npv_total else float("nan")
-    auc = float(roc_auc_score(y_true, y_score))
-    return {
-        "n": n,
-        "tn": int(tn),
-        "fp": int(fp),
-        "fn": int(fn),
-        "tp": int(tp),
-        "auc": auc,
-        "sensitivity": sens,
-        "specificity": spec,
-        "accuracy": acc,
-        "balanced_acc": ba,
-        "ppv": ppv,
-        "npv": npv,
-        "ci_auc_low": auc_hanley_mcneil_ci(y_true, y_score)[0],
-        "ci_auc_high": auc_hanley_mcneil_ci(y_true, y_score)[1],
-        "ci_sensitivity_low": wilson_ci(int(tp), sens_total)[0],
-        "ci_sensitivity_high": wilson_ci(int(tp), sens_total)[1],
-        "ci_specificity_low": wilson_ci(int(tn), spec_total)[0],
-        "ci_specificity_high": wilson_ci(int(tn), spec_total)[1],
-        "ci_accuracy_low": wilson_ci(int(tp + tn), n)[0],
-        "ci_accuracy_high": wilson_ci(int(tp + tn), n)[1],
-        "ci_balanced_acc_low": balanced_acc_ci(sens, spec, sens_total, spec_total)[0],
-        "ci_balanced_acc_high": balanced_acc_ci(sens, spec, sens_total, spec_total)[1],
-        "ci_ppv_low": wilson_ci(int(tp), ppv_total)[0],
-        "ci_ppv_high": wilson_ci(int(tp), ppv_total)[1],
-        "ci_npv_low": wilson_ci(int(tn), npv_total)[0],
-        "ci_npv_high": wilson_ci(int(tn), npv_total)[1],
-    }
+    result = compute_diagnostic_metrics(
+        df["y_true"].to_numpy(), df["y_pred"].to_numpy(), df["prob_class1"].to_numpy(),
+        centers=df["bootstrap_institution"].to_numpy() if "bootstrap_institution" in df else None,
+    )
+    for metric, (low, high) in result.pop("ci").items():
+        result[f"ci_{metric}_low"] = low
+        result[f"ci_{metric}_high"] = high
+    return result
 
 
 def fmt_auc(value: float, low: float, high: float) -> str:
@@ -304,7 +231,9 @@ def main() -> None:
     run_dir = args.run_dir.resolve()
     code_dir = args.code_dir.resolve()
     model_path = args.model_path.resolve()
-    output_xlsx = args.output_xlsx.resolve()
+    output_xlsx = require_analysis_output(args.output_xlsx, PACKAGE_ROOT)
+    if output_xlsx in (model_path, (run_dir / "data_config.json").resolve()):
+        raise ValueError("Output must not replace a checkpoint or input configuration")
     output_xlsx.parent.mkdir(parents=True, exist_ok=True)
 
     data_config = load_json(run_dir / "data_config.json")
@@ -371,14 +300,16 @@ def main() -> None:
             print(f"[WARN] skipped {name}: {exc}", flush=True)
 
     external_frames = [
-        predictions[name]
+        predictions[name].assign(bootstrap_institution=name)
         for name in ("External Center 1", "External Center 2")
         if name in predictions
     ]
-    if external_frames:
+    if len(external_frames) == 2:
         external_combined = pd.concat(external_frames, ignore_index=True)
         external_combined["cohort"] = "External Combined"
         predictions["External Combined"] = external_combined
+    elif external_frames:
+        print("[WARN] External Combined omitted: both manuscript institutions are required", flush=True)
 
     table_order = [
         "Training Cohort",
@@ -408,9 +339,10 @@ def main() -> None:
             {"key": "max_slices", "value": max_slices},
             {"key": "image_size", "value": image_size},
             {"key": "threshold", "value": args.threshold},
-            {"key": "auc_ci", "value": "Hanley-McNeil normal approximation"},
-            {"key": "proportion_ci", "value": "Wilson score interval"},
-            {"key": "balanced_acc_ci", "value": "Delta method from sensitivity and specificity"},
+            {"key": "auc_ci", "value": "DeLong"},
+            {"key": "binary_ci", "value": "Percentile bootstrap; 1000 resamples; default_rng seed=42"},
+            {"key": "external_combined_ci", "value": "Institution-stratified bootstrap"},
+            {"key": "scope", "value": "Local reanalysis, not regenerated frozen manuscript tables"},
             {"key": "failed_cohorts", "value": json.dumps(failures, ensure_ascii=False)},
         ]
     )

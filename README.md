@@ -1,21 +1,64 @@
 # Opportunistic screening of obstructive coronary artery disease from non-contrast chest CT by a self-supervised foundation model
 
-## Task
+This repository contains the model code, a packaged classifier checkpoint,
+approved aggregate result tables, and standalone publication panels.
+Patient-level study data are not included.
 
-Coronary CT binary classification, including model development, internal cohort evaluation, external cohort evaluation, prospective cohort evaluation, paper figure export, and calcium-score comparison.
+## Submission results and reproducibility
 
-## Repository Layout
+The approved aggregate CSVs in `paper_plots/` are the publication display source.
+The README result section and `index.html` are generated from those files.
+The approved figures are preserved without recalculation or redesign.
 
-- `code/training/`: dataset, model, training launcher, and PNG preprocessing code.
-- `code/inference/`: checkpoint inference and validation entry points.
-- `code/metrics/`: diagnostic-performance and Table 2 metric code.
-- `code/plotting/`: manuscript table export and figure-redraw utilities.
-- `models/best.pth`: packaged model checkpoint.
-- `paper_plots/`: final result tables and figures.
+| Repository file | Manuscript content |
+| --- | --- |
+| `paper_plots/table1_ai_performance.csv` | Extended Data Table 1: AI performance in seven cohorts/settings |
+| `paper_plots/table2_calcium_comparison.csv` | Table 2: AI versus non-gated and gated Agatston scores |
+| `paper_plots/submission_sources/` | Aggregate statistics, including exact P values |
+| `paper_plots/submission_manifest.json` | Approved figure/table checksums |
 
-## Data Layout
+The two CSV filenames are retained for compatibility. Their numbers are not
+the manuscript table numbers. Standalone panel filenames also retain the
+working figure numbering; see the panel descriptions in
+[Reproducibility](docs/REPRODUCIBILITY.md).
 
-Place the data under the repository root using the following structure. Each label JSON maps a patient ID to a binary label (`0` or `1`), and the corresponding image directory contains that patient's PNG/JPG slices.
+Check the public result bundle without installing the model environment:
+
+```bash
+python code/validation/verify_submission.py
+python code/plotting/build_github_english_release.py --check
+```
+
+After an approved change to the aggregate tables, explicitly refresh the
+display pages and review the diff:
+
+```bash
+python code/plotting/build_github_english_release.py --write
+```
+
+That command does not read a workbook, recalculate metrics, alter a figure,
+or modify a checkpoint. Statistical and clinical-data reproduction are separate
+checks; passing a display check does not prove end-to-end model reproduction.
+See [Reproducibility](docs/REPRODUCIBILITY.md) and the
+[submission checklist](docs/SUBMISSION_CHECKLIST.md).
+Completed checks and their limits are recorded in
+[submission validation](docs/VALIDATION.md).
+
+## Repository layout
+
+- `code/training/`: dataset, model, and training launcher.
+- `code/inference/`: checkpoint inference and cohort evaluation.
+- `code/metrics/`: diagnostic-performance estimation and local table export.
+- `code/plotting/`: public display generation and local figure utilities.
+- `code/validation/`: checks for the approved publication bundle.
+- `models/best.pth`: packaged classifier; its checksum and recorded internal-validation metrics are in `models/MODEL_INDEX.tsv`.
+- `paper_plots/`: approved aggregate tables and PNG/PDF/SVG panels.
+
+## Study data
+
+Keep study data and all patient-level generated outputs outside the public
+repository. The examples below describe relative input paths; they do not
+provide study records or permission to distribute them.
 
 ```text
 data/
@@ -30,23 +73,21 @@ data/
     └── json/forward_ct.json
 ```
 
-Place the pretrained ViT backbone at `models/pytorch_model.bin`. The packaged classifier checkpoint and its data configuration are `models/best.pth` and `models/data_config.json`.
+The existing inference commands accept local study inputs. Do not commit those
+inputs or their patient-level predictions. See [PRIVACY.md](PRIVACY.md) and
+[data access requirements](docs/AVAILABILITY.md). Real-world aggregate results
+are included in the tables; a public real-world patient dataset is not supplied.
 
-## Usage
+## Model use
 
-Run the training grid:
+The packaged classifier and its relative-path configuration are
+`models/best.pth` and `models/data_config.json`. Training from the pretrained
+backbone also requires `models/pytorch_model.bin`, which is not included in
+this repository. Its approved source and redistribution terms must be confirmed
+before claiming that the public package reproduces training from scratch.
 
-```bash
-python code/training/launch.py
-```
-
-To use an internal dataset stored elsewhere, set `INTERNAL_DATASET_ROOT`:
-
-```bash
-INTERNAL_DATASET_ROOT=datasets/internal python code/training/launch.py
-```
-
-### Training Settings Used
+The existing training grid uses the following settings. A grid describes the
+training launcher, not the provenance of every published cohort prediction.
 
 | Setting | Value |
 | --- | --- |
@@ -60,84 +101,113 @@ INTERNAL_DATASET_ROOT=datasets/internal python code/training/launch.py
 | Weight decay | 0.1 |
 | Scheduler | Cosine annealing |
 | Learning rates | `1e-5`, `2e-5` |
-| Transformer layers | `4`, `6`, `8`, `16` |
+| Transformer layers searched | `4`, `6`, `8`, `16` |
 | Dropout | 0.2 |
-| Epochs | 1000 |
+| Epoch limit | 1000 |
 | Data workers | 4 |
 | GPUs per run | 1 |
 
-Run one training configuration:
+Only run training or inference with authorized local data and the appropriate
+model environment. These operations are not part of the public bundle check.
 
 ```bash
-torchrun --nproc_per_node=1 --master_port=29501 code/training/train.py \
-  --CHECKPOINT_PATH runs/example_run \
-  --data_root data/internal/images \
-  --train_json data/internal/json/train.json \
-  --val_json data/internal/json/validation.json \
-  --batch_size 16 --lr 2e-5 --drop_out 0.2 --weight_decay 0.1 \
-  --image_size 224 --max_slices 32 --target_slices 32 \
-  --num_layers 16 --num_epochs 1000 --num_workers 4 \
-  --loss focal --focal_gamma 2.0
-```
+python code/training/launch.py
 
-Evaluate the packaged model on the two external centers:
-
-```bash
 python code/inference/eval_external.py \
   --model-path models/best.pth \
-  --result-dir metrics/external_evaluation
+  --result-dir outputs/external_evaluation
 ```
 
-Generate all-cohort metrics, prediction files, HTML/CSV/JSON summaries, and a local Excel table:
+The plotting/export utilities use staged local outputs. They must not overwrite
+the frozen publication files or modify their input workbooks. Use each command's
+`--help` for its required input and output paths.
+
+To export the approved aggregate CSVs to a local Excel workbook without
+recalculation:
 
 ```bash
-python code/inference/infer_table2_diagnostic_performance.py
-python code/metrics/export_checkpoint_table2_excel.py
+python code/plotting/export_manuscript_tables.py \
+  --output-xlsx outputs/frozen_tables/manuscript_tables.xlsx
 ```
 
-To regenerate figures from an authorized local workbook, provide its path at runtime. Generated workbooks and case-level outputs are intentionally excluded from this public repository:
+## Access, versioning, and citation
 
-```bash
-RESULTS_WORKBOOK=/authorized/local/results.xlsx \
-  python code/plotting/redraw_calcium_sens_npv_from_excel.py
-```
+Code is hosted at <https://github.com/MGI-Lab/osocad-ncct-ssfm>.
+Code Ocean is not used. Release publication, a version DOI, software licensing,
+and any controlled-data access commitment require the authors' approval;
+this repository does not invent those permissions or claim an unpublished DOI.
+Follow [the submission checklist](docs/SUBMISSION_CHECKLIST.md) before citing a
+new submission release.
 
-See `PRIVACY.md` before generating or publishing case-level outputs.
+<!-- BEGIN APPROVED RESULTS -->
 
-## Table 3 Metrics
+## Approved aggregate results
+
+Point estimates are shown with 95% confidence intervals. AUC intervals use DeLong; individual binary-metric intervals use 1,000 percentile-bootstrap resamples. AUC comparisons use paired DeLong; sensitivity and specificity comparisons use two-sided exact McNemar tests; NPV differences use 10,000 paired-bootstrap resamples. Pooled external bootstrap resampling is stratified by institution. Significant comparisons are displayed as P < 0.05; exact P values remain in the aggregate statistics files. Non-significant P values are displayed to four decimal places, so 0.0912 corresponds to 0.091 when rounded to the manuscript's three decimal places.
+
+### Extended Data Table 1: AI diagnostic performance
+
+[Download CSV](paper_plots/table1_ai_performance.csv)
+
+| Metrics | Training Cohort (n=2056) | Internal Validation (n=513) | External Center 1 (n=470) | External Center 2 (n=277) | External Combined (n=747) | Prospective Cohort (n=410) | Real-world Cohort (n=2,388) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| AUC | 0.887 (0.872 - 0.902) | 0.879 (0.849 - 0.908) | 0.845 (0.810 - 0.880) | 0.838 (0.786 - 0.891) | 0.848 (0.820 - 0.876) | 0.886 (0.845 - 0.927) | 0.848 (0.830 - 0.866) |
+| Sensitivity (%) | 79.3 (76.0 - 82.3) | 77.4 (70.9 - 83.5) | 83.6 (79.1 - 88.2) | 76.7 (67.7 - 85.7) | 81.8 (77.6 - 85.6) | 84.3 (77.1 - 91.1) | 75.7 (72.6 - 79.1) |
+| Specificity (%) | 80.6 (78.6 - 82.6) | 78.8 (74.2 - 83.2) | 71.7 (65.7 - 77.2) | 77.0 (71.2 - 82.6) | 74.1 (69.5 - 78.4) | 75.5 (70.5 - 80.3) | 79.8 (77.8 - 81.8) |
+| Accuracy (%) | 80.2 (78.5 - 81.8) | 78.4 (74.9 - 81.9) | 77.9 (74.3 - 81.3) | 76.9 (71.8 - 81.2) | 77.5 (74.2 - 80.5) | 77.8 (73.7 - 82.0) | 78.6 (77.0 - 80.3) |
+| Balanced Acc. (%) | 79.9 (78.1 - 81.7) | 78.1 (74.2 - 81.8) | 77.6 (73.9 - 81.1) | 76.9 (71.3 - 81.9) | 78.0 (74.8 - 80.7) | 79.9 (75.7 - 84.5) | 77.8 (75.9 - 79.7) |
+| PPV (%) | 66.7 (63.4 - 69.9) | 64.0 (57.6 - 71.0) | 76.1 (71.0 - 81.2) | 60.0 (50.5 - 68.2) | 71.4 (66.8 - 75.9) | 55.2 (48.1 - 62.7) | 60.2 (57.0 - 63.5) |
+| NPV (%) | 88.8 (87.0 - 90.5) | 87.7 (83.8 - 91.2) | 80.2 (74.6 - 85.4) | 88.0 (83.2 - 92.6) | 83.7 (80.3 - 87.2) | 93.1 (89.8 - 96.1) | 89.1 (87.5 - 90.7) |
+
+### Table 2: AI and calcium-score comparison
+
+[Download CSV](paper_plots/table2_calcium_comparison.csv)
 
 | Metrics | Proposed AI Model (NCCT) | Non-gated Agatston Score (NCCT) | Gated Agatston Score (Dedicated CSCT) | Comparison with Non-gated Score | Comparison with Gated Score |
 | --- | --- | --- | --- | --- | --- |
-| External Cohorts |  |  |  |  |  |
-| AUC | 0.848 (0.817 - 0.874) | 0.824 (0.794 - 0.853) | 0.868 (0.842 - 0.894) | p = 0.045088 (p < 0.05) | p = 0.0457172 (p < 0.05) |
-| Sensitivity (%) | 81.8 (77.6 - 85.6) | 40.6 (35.4 - 45.9) | 57.9 (52.9 - 63.8) | p = 1.71235e-37 (p < 0.05) | p = 3.01885e-20 (p < 0.05) |
-| Specificity (%) | 74.1 (69.5 - 78.4) | 97.1 (95.5 - 98.6) | 92.3 (89.7 - 94.8) | p = 2.52435e-29 (p < 0.05) | p = 5.36178e-21 (p < 0.05) |
-| NPV (%) | 83.7 (80.3 - 87.2) | 67.4 (64.1 - 71.0) | 73.5 (70.2 - 77.3) | Delta +16.4 pp (+13.0 to +19.7); p = 9.999e-05 (p < 0.05) | Delta +10.3 pp (+7.2 to +13.3); p = 9.999e-05 (p < 0.05) |
+| External Validation Cohorts |  |  |  |  |  |
+| AUC | 0.848 (0.820 - 0.876) | 0.824 (0.795 - 0.853) | 0.868 (0.842 - 0.894) | P < 0.05 | P < 0.05 |
+| Sensitivity (%) | 81.8 (77.6 - 85.6) | 40.6 (35.4 - 45.9) | 57.9 (52.9 - 63.8) | P < 0.05 | P < 0.05 |
+| Specificity (%) | 74.1 (69.5 - 78.4) | 97.1 (95.5 - 98.6) | 92.3 (89.7 - 94.8) | P < 0.05 | P < 0.05 |
+| NPV (%) | 83.7 (80.3 - 87.2) | 67.4 (64.1 - 71.0) | 73.5 (70.2 - 77.3) | Delta +16.4 pp (+13.0 to +19.7); P < 0.05 | Delta +10.3 pp (+7.2 to +13.3); P < 0.05 |
 | Prospective Cohort |  |  |  |  |  |
-| AUC | 0.886 (0.841 - 0.926) | 0.857 (0.814 - 0.901) | 0.898 (0.858 - 0.934) | p = 0.0727101 (ns) | p = 0.321406 (ns) |
-| Sensitivity (%) | 84.3 (77.1 - 91.1) | 60.2 (51.0 - 69.9) | 75.9 (67.6 - 83.5) | p = 2.98023e-08 (p < 0.05) | p = 0.00390625 (p < 0.05) |
-| Specificity (%) | 75.5 (70.5 - 80.3) | 94.4 (91.5 - 96.8) | 91.7 (88.8 - 94.9) | p = 3.91866e-14 (p < 0.05) | p = 3.17968e-13 (p < 0.05) |
-| NPV (%) | 93.1 (89.8 - 96.1) | 86.9 (83.2 - 90.6) | 91.4 (88.3 - 94.4) | Delta +6.2 pp (+3.4 to +9.2); p = 0.00019998 (p < 0.05) | Delta +1.6 pp (-0.1 to +3.7); p = 0.0911909 (ns) |
+| AUC | 0.886 (0.845 - 0.927) | 0.857 (0.814 - 0.901) | 0.898 (0.860 - 0.936) | P = 0.0727 | P = 0.3214 |
+| Sensitivity (%) | 84.3 (77.1 - 91.1) | 60.2 (51.0 - 69.9) | 75.9 (67.6 - 83.5) | P < 0.05 | P < 0.05 |
+| Specificity (%) | 75.5 (70.5 - 80.3) | 94.4 (91.5 - 96.8) | 91.7 (88.8 - 94.9) | P < 0.05 | P < 0.05 |
+| NPV (%) | 93.1 (89.8 - 96.1) | 86.9 (83.2 - 90.6) | 91.4 (88.3 - 94.4) | Delta +6.2 pp (+3.4 to +9.2); P < 0.05 | Delta +1.6 pp (-0.1 to +3.7); P = 0.0912 |
+| Real-world Cohort (n=2,388) |  |  |  |  |  |
+| AUC | 0.848 (0.830 - 0.866) | 0.813 (0.793 - 0.832) | 0.866 (0.850 - 0.883) | P < 0.05 | P < 0.05 |
+| Sensitivity (%) | 75.7 (72.6 - 79.1) | 43.1 (39.5 - 46.8) | 69.1 (65.7 - 72.5) | P < 0.05 | P < 0.05 |
+| Specificity (%) | 79.8 (77.8 - 81.8) | 95.2 (94.2 - 96.3) | 87.7 (85.9 - 89.2) | P < 0.05 | P < 0.05 |
+| NPV (%) | 89.1 (87.5 - 90.7) | 80.6 (78.8 - 82.2) | 87.6 (85.8 - 89.0) | Delta +8.4 pp (+7.1 to +9.8); P < 0.05 | Delta +1.5 pp (+0.5 to +2.6); P < 0.05 |
 
-## Result Files
+### Final standalone panels
 
-- `paper_plots/table1_ai_performance.csv`
-- `paper_plots/table2_calcium_comparison.csv`
+Panel filenames retain the working figure numbering; they are not a new numbering scheme for the assembled manuscript. PNG previews and editable PDF/SVG versions contain the same approved figure content.
 
-## Figures
+| Panel | Preview | Editable PDF | Editable SVG |
+| --- | --- | --- | --- |
+| Fig2_A | [PNG](paper_plots/Fig2_A.png) | [PDF](paper_plots/Fig2_A.pdf) | [SVG](paper_plots/Fig2_A.svg) |
+| Fig2_B | [PNG](paper_plots/Fig2_B.png) | [PDF](paper_plots/Fig2_B.pdf) | [SVG](paper_plots/Fig2_B.svg) |
+| Fig2_C | [PNG](paper_plots/Fig2_C.png) | [PDF](paper_plots/Fig2_C.pdf) | [SVG](paper_plots/Fig2_C.svg) |
+| Fig3_A | [PNG](paper_plots/Fig3_A.png) | [PDF](paper_plots/Fig3_A.pdf) | [SVG](paper_plots/Fig3_A.svg) |
+| Fig3_B | [PNG](paper_plots/Fig3_B.png) | [PDF](paper_plots/Fig3_B.pdf) | [SVG](paper_plots/Fig3_B.svg) |
+| Fig3_C | [PNG](paper_plots/Fig3_C.png) | [PDF](paper_plots/Fig3_C.pdf) | [SVG](paper_plots/Fig3_C.svg) |
+| Fig3_D | [PNG](paper_plots/Fig3_D.png) | [PDF](paper_plots/Fig3_D.pdf) | [SVG](paper_plots/Fig3_D.svg) |
+| Fig4_A | [PNG](paper_plots/Fig4_A.png) | [PDF](paper_plots/Fig4_A.pdf) | [SVG](paper_plots/Fig4_A.svg) |
+| Fig4_B | [PNG](paper_plots/Fig4_B.png) | [PDF](paper_plots/Fig4_B.pdf) | [SVG](paper_plots/Fig4_B.svg) |
+| Fig4_C | [PNG](paper_plots/Fig4_C.png) | [PDF](paper_plots/Fig4_C.pdf) | [SVG](paper_plots/Fig4_C.svg) |
+| Fig4_D | [PNG](paper_plots/Fig4_D.png) | [PDF](paper_plots/Fig4_D.pdf) | [SVG](paper_plots/Fig4_D.svg) |
+| Fig5_A | [PNG](paper_plots/Fig5_A.png) | [PDF](paper_plots/Fig5_A.pdf) | [SVG](paper_plots/Fig5_A.svg) |
+| Fig5_B | [PNG](paper_plots/Fig5_B.png) | [PDF](paper_plots/Fig5_B.pdf) | [SVG](paper_plots/Fig5_B.svg) |
+| Fig5_C | [PNG](paper_plots/Fig5_C.png) | [PDF](paper_plots/Fig5_C.pdf) | [SVG](paper_plots/Fig5_C.svg) |
+| Fig5_D | [PNG](paper_plots/Fig5_D.png) | [PDF](paper_plots/Fig5_D.pdf) | [SVG](paper_plots/Fig5_D.svg) |
+| Fig5_E | [PNG](paper_plots/Fig5_E.png) | [PDF](paper_plots/Fig5_E.pdf) | [SVG](paper_plots/Fig5_E.svg) |
+| Fig5_F | [PNG](paper_plots/Fig5_F.png) | [PDF](paper_plots/Fig5_F.pdf) | [SVG](paper_plots/Fig5_F.svg) |
+| Fig5_G | [PNG](paper_plots/Fig5_G.png) | [PDF](paper_plots/Fig5_G.pdf) | [SVG](paper_plots/Fig5_G.svg) |
+| Fig5_H | [PNG](paper_plots/Fig5_H.png) | [PDF](paper_plots/Fig5_H.pdf) | [SVG](paper_plots/Fig5_H.svg) |
+| Fig5_I | [PNG](paper_plots/Fig5_I.png) | [PDF](paper_plots/Fig5_I.pdf) | [SVG](paper_plots/Fig5_I.svg) |
 
-- `paper_plots/Fig2_A.png`
-- `paper_plots/Fig2_B.png`
-- `paper_plots/Fig2_C.png`
-- `paper_plots/Fig3_A.png`
-- `paper_plots/Fig3_B.png`
-- `paper_plots/Fig3_C.png`
-- `paper_plots/Fig3_D.png`
-- `paper_plots/Fig4_A.png`
-- `paper_plots/Fig4_B.png`
-- `paper_plots/Fig4_C.png`
-- `paper_plots/Fig4_D.png`
-- `paper_plots/Fig5_A.png`
-- `paper_plots/Fig5_B.png`
-- `paper_plots/Fig5_C.png`
-- `paper_plots/Fig5_D.png`
+[Exact aggregate statistics](paper_plots/submission_sources/) · [File checksums](paper_plots/submission_manifest.json)
+
+<!-- END APPROVED RESULTS -->

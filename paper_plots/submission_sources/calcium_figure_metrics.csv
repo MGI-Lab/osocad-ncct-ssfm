@@ -1,0 +1,19 @@
+cohort,metric,method,value,low,high,ci_method
+External,AUC,AI Model,0.84796889760918548,0.81980185808929706,0.87613593712907389,DeLong
+External,AUC,Non-gated Agatston,0.82410798633820215,0.79523802580171443,0.85297794687468986,DeLong
+External,AUC,Gated Agatston,0.86798924496766228,0.8420074192003667,0.89397107073495785,DeLong
+External,Sensitivity,AI Model,0.81799999999999995,0.77599999999999991,0.85599999999999998,percentile bootstrap (legacy frozen estimate)
+External,Sensitivity,Non-gated Agatston,0.40600000000000003,0.35399999999999998,0.45899999999999996,percentile bootstrap (legacy frozen estimate)
+External,Sensitivity,Gated Agatston,0.57899999999999996,0.52900000000000003,0.63800000000000001,percentile bootstrap (legacy frozen estimate)
+External,NPV,AI Model,0.83700000000000008,0.80299999999999994,0.872,percentile bootstrap (legacy frozen estimate)
+External,NPV,Non-gated Agatston,0.67400000000000004,0.6409999999999999,0.70999999999999996,percentile bootstrap (legacy frozen estimate)
+External,NPV,Gated Agatston,0.73499999999999999,0.70200000000000007,0.77300000000000002,percentile bootstrap (legacy frozen estimate)
+Prospective,AUC,AI Model,0.88563895020848671,0.84467108712347772,0.9266068132934957,DeLong
+Prospective,AUC,Non-gated Agatston,0.85737061564876127,0.81400151500187035,0.90073971629565219,DeLong
+Prospective,AUC,Gated Agatston,0.8980255089526612,0.8604676189942595,0.9355833989110629,DeLong
+Prospective,Sensitivity,AI Model,0.84299999999999997,0.77099999999999991,0.91099999999999992,percentile bootstrap (legacy frozen estimate)
+Prospective,Sensitivity,Non-gated Agatston,0.60199999999999998,0.51000000000000001,0.69900000000000007,percentile bootstrap (legacy frozen estimate)
+Prospective,Sensitivity,Gated Agatston,0.75900000000000001,0.67599999999999993,0.83499999999999996,percentile bootstrap (legacy frozen estimate)
+Prospective,NPV,AI Model,0.93099999999999994,0.89800000000000002,0.96099999999999997,percentile bootstrap (legacy frozen estimate)
+Prospective,NPV,Non-gated Agatston,0.86900000000000011,0.83200000000000007,0.90599999999999992,percentile bootstrap (legacy frozen estimate)
+Prospective,NPV,Gated Agatston,0.91400000000000003,0.88300000000000001,0.94400000000000006,percentile bootstrap (legacy frozen estimate)

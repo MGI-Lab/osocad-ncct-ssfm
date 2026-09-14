@@ -3,7 +3,6 @@ import csv
 import html
 import importlib.util
 import json
-import math
 import os
 import re
 import sys
@@ -12,11 +11,12 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import confusion_matrix, roc_auc_score
 from torch.utils.data import DataLoader
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PACKAGE_ROOT / "code" / "metrics"))
+from diagnostic_statistics import compute_diagnostic_metrics, require_analysis_output
 DEFAULT_RUN_DIR = PACKAGE_ROOT / "models"
 DEFAULT_CODE_DIR = PACKAGE_ROOT / "code" / "training"
 DEFAULT_EXTERNAL_JSON_ROOT = PACKAGE_ROOT / "data" / "external" / "json"
@@ -24,7 +24,7 @@ DEFAULT_EXTERNAL_IMAGE_ROOT = PACKAGE_ROOT / "data" / "external" / "images"
 DEFAULT_EXTERNAL_EVAL_SETS = ["external_shuguang.json", "external_huangshan.json"]
 DEFAULT_PROSPECTIVE_JSON = PACKAGE_ROOT / "data" / "prospective" / "json" / "forward_ct.json"
 DEFAULT_PROSPECTIVE_IMAGE_ROOT = PACKAGE_ROOT / "data" / "prospective" / "images"
-DEFAULT_OUTPUT_DIR = PACKAGE_ROOT / "metrics"
+DEFAULT_OUTPUT_DIR = PACKAGE_ROOT / "outputs" / "reanalysis"
 
 
 def display_path(path):
@@ -178,85 +178,9 @@ def predict_dataset(
     }
 
 
-def wilson_ci(successes, total, z=1.959963984540054):
-    if total <= 0:
-        return [float("nan"), float("nan")]
-    p = successes / total
-    denom = 1.0 + z * z / total
-    center = (p + z * z / (2.0 * total)) / denom
-    half = z * math.sqrt((p * (1.0 - p) / total) + (z * z / (4.0 * total * total))) / denom
-    return [max(0.0, center - half), min(1.0, center + half)]
-
-
-def auc_hanley_mcneil_ci(y_true, y_score, z=1.959963984540054):
-    y_true = np.asarray(y_true)
-    y_score = np.asarray(y_score)
-    auc = float(roc_auc_score(y_true, y_score))
-    n_pos = int(np.sum(y_true == 1))
-    n_neg = int(np.sum(y_true == 0))
-    if n_pos == 0 or n_neg == 0:
-        return [float("nan"), float("nan")]
-    q1 = auc / (2.0 - auc)
-    q2 = 2.0 * auc * auc / (1.0 + auc)
-    var = (
-        auc * (1.0 - auc)
-        + (n_pos - 1) * (q1 - auc * auc)
-        + (n_neg - 1) * (q2 - auc * auc)
-    ) / (n_pos * n_neg)
-    se = math.sqrt(max(var, 0.0))
-    return [max(0.0, auc - z * se), min(1.0, auc + z * se)]
-
-
-def balanced_acc_ci(sens, spec, sens_total, spec_total, z=1.959963984540054):
-    if sens_total <= 0 or spec_total <= 0:
-        return [float("nan"), float("nan")]
-    var_sens = sens * (1.0 - sens) / sens_total
-    var_spec = spec * (1.0 - spec) / spec_total
-    se = 0.5 * math.sqrt(var_sens + var_spec)
-    ba = 0.5 * (sens + spec)
-    return [max(0.0, ba - z * se), min(1.0, ba + z * se)]
-
-
-def compute_metrics(y_true, y_pred, y_score):
-    y_true = np.asarray(y_true).astype(np.int64)
-    y_pred = np.asarray(y_pred).astype(np.int64)
-    y_score = np.asarray(y_score)
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
-    n = int(len(y_true))
-    sens_total = tp + fn
-    spec_total = tn + fp
-    sens = tp / sens_total if sens_total else float("nan")
-    spec = tn / spec_total if spec_total else float("nan")
-    acc = (tp + tn) / n if n else float("nan")
-    ba = 0.5 * (sens + spec)
-    ppv_total = tp + fp
-    npv_total = tn + fn
-    ppv = tp / ppv_total if ppv_total else float("nan")
-    npv = tn / npv_total if npv_total else float("nan")
-    auc = float(roc_auc_score(y_true, y_score))
-    return {
-        "n": n,
-        "tn": int(tn),
-        "fp": int(fp),
-        "fn": int(fn),
-        "tp": int(tp),
-        "auc": auc,
-        "sensitivity": sens,
-        "specificity": spec,
-        "accuracy": acc,
-        "balanced_acc": ba,
-        "ppv": ppv,
-        "npv": npv,
-        "ci": {
-            "auc": auc_hanley_mcneil_ci(y_true, y_score),
-            "sensitivity": wilson_ci(tp, sens_total),
-            "specificity": wilson_ci(tn, spec_total),
-            "accuracy": wilson_ci(tp + tn, n),
-            "balanced_acc": balanced_acc_ci(sens, spec, sens_total, spec_total),
-            "ppv": wilson_ci(tp, ppv_total),
-            "npv": wilson_ci(tn, npv_total),
-        },
-    }
+def compute_metrics(y_true, y_pred, y_score, centers=None):
+    """Local reanalysis only; frozen publication tables are not regenerated."""
+    return compute_diagnostic_metrics(y_true, y_pred, y_score, centers=centers)
 
 
 def sanitize_name(name):
@@ -339,13 +263,16 @@ th.metric{width:210px;font-weight:800}.main-val{font-size:27px}.ci{font-size:22p
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Table 2 Diagnostic Performance</title><style>{css}</style></head><body><div class="wrap">
 <h1>Table 2. Diagnostic performance of the AI model across development and validation cohorts.</h1>
-<p class="note">Model: <code>{html.escape(display_path(model_path))}</code>. Values are point estimate with 95% CI. AUC CI uses Hanley-McNeil approximation; Sensitivity, Specificity, Accuracy, PPV and NPV use Wilson score intervals; Balanced Accuracy uses the delta method.</p>
+<p class="note">Model: <code>{html.escape(display_path(model_path))}</code>. Local reanalysis, not the frozen manuscript table. Values are point estimates with 95% CIs. AUC CIs use DeLong; all binary metric CIs use percentile bootstrap with 1,000 resamples, default_rng (PCG64), seed 42. Combined external resampling is institution-stratified. Input order is preserved; valid resample counts are recorded in the JSON metadata.</p>
 <table><thead><tr><th class="metric">Metrics</th>{headers}</tr></thead><tbody>{''.join(metric_rows)}</tbody></table>
 <div class="files"><div>Output directory: <code>{html.escape(display_path(output_dir))}</code></div></div>
 </div></body></html>"""
 
 
 def save_table_outputs(cohorts, model_path, output_dir, output_prefix):
+    if Path(output_prefix).name != output_prefix or output_prefix in ("", ".", ".."):
+        raise ValueError("output_prefix must be a filename prefix without directories")
+    output_dir = require_analysis_output(output_dir, PACKAGE_ROOT)
     json_path = output_dir / f"{output_prefix}.json"
     csv_path = output_dir / f"{output_prefix}.csv"
     html_path = output_dir / f"{output_prefix}.html"
@@ -354,9 +281,10 @@ def save_table_outputs(cohorts, model_path, output_dir, output_prefix):
             {
                 "model_path": display_path(model_path),
                 "ci_methods": {
-                    "auc": "Hanley-McNeil normal approximation",
-                    "balanced_acc": "delta method from sensitivity and specificity",
-                    "proportions": "Wilson score interval",
+                    "auc": "DeLong",
+                    "binary": "Percentile bootstrap, 1000 resamples, default_rng seed=42",
+                    "external_combined": "Institution-stratified bootstrap",
+                    "scope": "Local reanalysis; input order and RNG affect finite-bootstrap endpoints",
                 },
                 "cohorts": cohorts,
             },
@@ -378,7 +306,7 @@ def main():
     code_dir = (args.code_dir or DEFAULT_CODE_DIR).resolve()
     model_path = run_dir / args.model_name
     data_config_path = run_dir / "data_config.json"
-    output_dir = args.output_dir.resolve()
+    output_dir = require_analysis_output(args.output_dir, PACKAGE_ROOT)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if not model_path.exists():
@@ -439,6 +367,7 @@ def main():
     external_true = []
     external_pred = []
     external_score = []
+    external_centers = []
     meta = {
         "run_dir": display_path(run_dir),
         "code_dir": display_path(code_dir),
@@ -486,11 +415,13 @@ def main():
             external_true.append(result["y_true"])
             external_pred.append(result["y_pred"])
             external_score.append(result["y_score"])
+            external_centers.extend([spec["name"]] * len(result["y_true"]))
 
     external_combined = compute_metrics(
         np.concatenate(external_true),
         np.concatenate(external_pred),
         np.concatenate(external_score),
+        centers=np.asarray(external_centers),
     )
     external_combined["prediction_path"] = "combined from external center prediction files"
 

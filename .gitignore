@@ -8,6 +8,30 @@ __pycache__/
 /runs/
 /github_data/
 *.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.ods
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+/private_data/
+/private_outputs/
+/local_results/
+/staging/
+/output/
+/outputs/
+/.codex/
+/.venv*/
+/.pytest_cache/
+*case_data*.csv
+*case_data*.json
+*patient_predictions*.csv
+*patient_predictions*.json
+*case_predictions*.csv
+*case_predictions*.json
+*tsne_coordinates*.csv
 
 # Generated release pages
 html1.html
