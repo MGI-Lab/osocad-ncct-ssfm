@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import html
 import importlib.util
 import json
 import math
@@ -38,6 +39,18 @@ REDUNDANT_PANEL_TITLES = {
     'Real-world ROC Comparison', 'Real-world Sensitivity and NPV',
     'Internal (n=513)', 'External (n=747)', 'Prospective (n=410)',
 }
+
+SUPERSCRIPT = str.maketrans('-0123456789', '⁻⁰¹²³⁴⁵⁶⁷⁸⁹')
+
+
+def manuscript_p_display(p):
+    """Apply the approved manuscript display without changing the raw value."""
+    if p < 0.001:
+        if p == 0:
+            return 'P < 0.001'
+        mantissa, exponent = f'{p:.2e}'.split('e')
+        return f'P < 0.001 ({mantissa} × 10{str(int(exponent)).translate(SUPERSCRIPT)})'
+    return f'P = {p:.3f}'
 
 
 def builder_module(root):
@@ -145,18 +158,43 @@ def check_bundle(root: Path) -> dict:
 
     exact = load_dicts(root / 'paper_plots/submission_sources/Table3_exact_statistics.csv')
     exact_map = {(r['Cohort'], r['Metric'], r['Comparison']): r for r in exact}
+    for record in exact:
+        p = float(record['Raw P value'])
+        check(0 <= p <= 1 and record['Display'] == manuscript_p_display(p),
+              f'Approved P display: {record["Cohort"]}/{record["Metric"]}/{record["Comparison"]}')
     for cohort, offset in cohort_offsets.items():
         for row_offset, metric in enumerate(['AUC', 'Sensitivity', 'Specificity', 'NPV'], start=1):
             for column, model in [(4, 'Non-gated Agatston'), (5, 'Gated Agatston')]:
                 record = exact_map[(cohort, metric, f'AI Model vs {model}')]
                 p = float(record['Raw P value'])
-                display = 'P < 0.05' if p < 0.05 else f'P = {p:.4f}'
-                check(0 <= p <= 1 and display == record['Display'], f'Exact/display P: {cohort}/{metric}/{model}')
+                display = manuscript_p_display(p)
                 if metric == 'NPV':
                     difference, low, high = (100*float(record[k]) for k in ['Difference (first method - second method)', 'Difference 95% CI Low', 'Difference 95% CI High'])
                     display = f'Delta {difference:+.1f} pp ({low:+.1f} to {high:+.1f}); {display}'
                     check(record['CI method'] == 'paired bootstrap', f'NPV difference interval method: {cohort}/{model}')
                 check(comparison[offset+row_offset][column] == display, f'Comparison display linked to exact statistics: {cohort}/{metric}/{model}')
+
+    panel_rows = load_dicts(root / 'paper_plots/submission_sources/panel_statistics.csv')
+    for record in panel_rows:
+        p = float(record['p'])
+        compact = 'P < 0.001' if p < 0.001 else f'P = {p:.3f}'
+        check(record['figure_display'] == compact,
+              f'Compact panel P display: {record["panel"]}/{record["Comparison"]}')
+    expected_panel_labels = {
+        'Figure3_B': ['P < 0.001'] * 4,
+        'Figure3_D': ['P = 0.004', 'P < 0.001', 'P = 0.091', 'P < 0.001'],
+        'Figure3_F': ['P < 0.001', 'P < 0.001', 'P = 0.004', 'P < 0.001'],
+    }
+    for panel, labels in expected_panel_labels.items():
+        svg = html.unescape((root / 'paper_plots' / f'{panel}.svg').read_text(encoding='utf-8'))
+        for label in set(labels):
+            check(svg.count(f'>{label}</text>') == labels.count(label),
+                  f'Final SVG P labels: {panel}/{label}')
+    probability_svg = (root / 'paper_plots/ExtendedDataFigure2_D.svg').read_text(encoding='utf-8')
+    for label in ['Real world (n=2388)', 'Participants', 'Predicted probability']:
+        check(f'>{label}</text>' in probability_svg, f'Extended Data Figure 2d label: {label}')
+    check('Participants (fixed pseudonymized order)' not in probability_svg,
+          'Extended Data Figure 2d omits the removed x-axis qualifier')
 
     for path, expected in builder.expected_pages(root).items():
         check(path.is_file() and path.read_text(encoding='utf-8') == expected, f'Generated display in sync: {path.name}')

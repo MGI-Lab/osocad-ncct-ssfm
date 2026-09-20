@@ -81,15 +81,15 @@ def parse_p_display(value) -> str:
     text = "" if value is None else str(value)
     less_than = re.search(r"p\s*<\s*([0-9.eE+-]+)", text, flags=re.I)
     if less_than:
-        if float(less_than.group(1)) <= 0.05:
-            return "P < 0.05"
-        raise ValueError("An upper bound above 0.05 cannot determine significance")
+        if float(less_than.group(1)) <= 0.001:
+            return "P < 0.001"
+        raise ValueError("Only an upper bound at or below 0.001 determines the final figure display")
     match = re.search(r"p\s*=\s*([0-9.eE+-]+)", text, flags=re.I)
     if match:
         p = float(match.group(1))
-        if p < 0.05:
-            return "P < 0.05"
-        return f"P = {p:.4f}".rstrip("0").rstrip(".")
+        if p < 0.001:
+            return "P < 0.001"
+        return f"P = {p:.3f}"
     if re.search(r"\bns\b", text, flags=re.I):
         return "ns"
     raise ValueError(f"Cannot parse p-value display from {value!r}.")
@@ -171,7 +171,8 @@ def beautify_axis(ax):
 
 
 def draw_sig_bracket(ax, x1, x2, y, text, h=2.2):
-    is_significant = text == "P < 0.05"
+    numeric = re.fullmatch(r"P = ([0-9.]+)", text)
+    is_significant = text == "P < 0.001" or bool(numeric and float(numeric.group(1)) < 0.05)
     text_color = "#2fb596" if is_significant else "#222222"
     text_weight = "bold" if is_significant else "normal"
     ax.plot([x1, x1, x2, x2], [y, y + h, y + h, y], lw=1.3, color="#555555", clip_on=False)

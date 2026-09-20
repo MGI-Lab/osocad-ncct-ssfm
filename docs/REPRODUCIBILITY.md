@@ -40,12 +40,13 @@ For pooled external validation, bootstrap sampling preserves each institution's
 sample count. Other validation settings use patient-level resampling. Pairwise
 bootstrap comparisons use the same resampled indices for both models.
 
-The approved display uses `P < 0.05` for significant results and four decimal
-places otherwise. The exact P values are retained in
-`paper_plots/submission_sources/Table3_exact_statistics.csv`. A displayed
-`P = 0.0912` is the same underlying prospective NPV comparison reported as
-`P = 0.091` at three decimal places in the manuscript. Neither number denotes
-the rejected 1,000-replication NPV-comparison candidate.
+The approved manuscript display reports P values of 0.001 or greater to three
+decimal places. Values below 0.001 are shown as `P < 0.001`, followed in the
+text and comparison table by the calculated value in parentheses using
+three-significant-digit scientific notation. The unrounded values are retained
+in `paper_plots/submission_sources/Table3_exact_statistics.csv`. Figure 3b,d,f
+uses compact labels (`P < 0.001`, `P = 0.004` or `P = 0.091`) so that the
+annotations remain legible.
 
 `Table3_exact_statistics.csv` contains all comparisons for the four reported
 metrics, plus the real-world gated-versus-non-gated AUC comparison shown in the
@@ -89,6 +90,23 @@ python -m unittest discover -s tests -v
 These pins cover the validation tests and aggregate Excel export only. They do
 not claim to reconstruct the complete training or GPU inference environment.
 
+## Model software and DICOM handling
+
+Model preprocessing, training and inference were implemented in Python v.3.10.19
+using PyTorch v.2.7.0 and the software packages described in manuscript
+Extended Data Table 3. These model-environment versions are separate from the
+lightweight validation requirements in `requirements-validation.txt`.
+
+Clinical CT images were retrieved from institutional PACS in DICOM format.
+Individual DICOM files were read using pydicom for pixel-data extraction and
+metadata inspection. DICOM series were identified using the GDCM
+series-discovery functions available through SimpleITK, assembled using
+`SimpleITK.ImageSeriesReader`, and written as compressed NIfTI volumes for
+downstream processing. The historical pydicom, SimpleITK and GDCM versions were
+not pinned in the materials available for this repository, so no version numbers
+are inferred here. This technical description does not attribute institutional
+de-identification to those libraries.
+
 ## Checkpoint boundary
 
 The packaged `models/best.pth` has the checksum recorded in `MODEL_INDEX.tsv`.
@@ -121,8 +139,9 @@ Asset identifiers now match the assembled article.
 | ExtendedDataFigure2_A–D | Internal, pooled external, prospective, and real-world predicted probabilities |
 
 The panels keep the approved sans-serif typography, physical size, plot types,
-colors, axes, legends, and numerical labels. Redundant standalone titles were
-removed because the composite supplies the figure and panel context. All 16
-current panels have PNG previews and editable PDF/SVG versions.
+colors, axes, legends, and numerical labels. Standalone text follows the final
+composite layout; Extended Data Figure 2d retains the requested `Real world
+(n=2388)` title and uses `Participants` and `Predicted probability` as its axis
+labels. All 16 current panels have PNG previews and editable PDF/SVG versions.
 No case-level source CSV, t-SNE coordinate table, or original study workbook is
 included in this publication bundle.

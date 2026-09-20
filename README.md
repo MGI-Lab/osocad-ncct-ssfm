@@ -14,13 +14,17 @@ uploaded before the earlier history remediation. See [PRIVACY.md](PRIVACY.md).
 The approved aggregate CSVs in `paper_plots/` are the publication display source.
 The README result section and `index.html` are generated from those files.
 The approved figure values and data geometry are preserved. Current panel
-filenames and redundant standalone titles are synchronized to the manuscript
-assembly without changing the plotted results.
+filenames, P-value labels and standalone text are synchronized to the final
+manuscript assembly.
+
+Model preprocessing, training and inference were implemented in Python v.3.10.19
+using PyTorch v.2.7.0 and the software packages described in manuscript
+Extended Data Table 3.
 
 | Repository file | Manuscript content |
 | --- | --- |
-| `paper_plots/table1_ai_performance.csv` | Extended Data Table 1: AI performance in seven cohorts/settings |
-| `paper_plots/table2_calcium_comparison.csv` | Table 2: AI versus non-gated and gated Agatston scores |
+| `paper_plots/table1_ai_performance.csv` | Extended Data Table 1: Diagnostic performance of the AI model across development and validation cohorts |
+| `paper_plots/table2_calcium_comparison.csv` | Table 2: Head-to-head comparison of the AI model versus traditional calcium scoring |
 | `paper_plots/submission_sources/` | Aggregate statistics, including exact P values |
 | `paper_plots/submission_manifest.json` | Approved figure/table checksums |
 
@@ -48,8 +52,9 @@ or modify a checkpoint. Statistical and clinical-data reproduction are separate
 checks; passing a display check does not prove end-to-end model reproduction.
 See [Reproducibility](docs/REPRODUCIBILITY.md) and the
 [submission checklist](docs/SUBMISSION_CHECKLIST.md).
-Completed checks and their limits are recorded in
-[submission validation](docs/VALIDATION.md).
+Completed checks and their limits are recorded in the historical
+[v1.0.1 submission validation](docs/VALIDATION.md) and the subsequent
+[20 September main-branch synchronization](docs/MAIN_SYNC_2026-09-20.md).
 
 ## Repository layout
 
@@ -84,6 +89,13 @@ The existing inference commands accept local study inputs. Do not commit those
 inputs or their patient-level predictions. See [PRIVACY.md](PRIVACY.md) and
 [data access requirements](docs/AVAILABILITY.md). Real-world aggregate results
 are included in the tables; a public real-world patient dataset is not supplied.
+
+Clinical CT images were retrieved from institutional PACS in DICOM format.
+Individual DICOM files were read using pydicom for pixel-data extraction and
+metadata inspection. DICOM series were identified using the GDCM
+series-discovery functions available through SimpleITK, assembled using
+`SimpleITK.ImageSeriesReader`, and written as compressed NIfTI volumes for
+downstream processing. DICOM and NIfTI patient data are not included here.
 
 ## Model use
 
@@ -140,11 +152,12 @@ python code/plotting/export_manuscript_tables.py \
 ## Access, versioning, and citation
 
 Code is hosted at <https://github.com/MGI-Lab/osocad-ncct-ssfm>.
-The current submission version is `v1.0.1`; its publication status and downloadable
-assets are shown on the [GitHub Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.1).
-It retains the approved final numerical results and the 16 standalone panels used
-by the current manuscript assembly. The immutable `v1.0.0` release preserves the
-earlier 20-panel working-number package for historical audit.
+The latest formal submission release remains `v1.0.1`; its publication status and
+downloadable assets are shown on the [GitHub Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.1).
+The `main` branch includes the subsequent final P-value display, panel-text and
+methods-documentation synchronization. This update does not move either existing
+tag or create a new Release. The immutable `v1.0.0` release preserves the earlier
+20-panel working-number package for historical audit.
 Code Ocean is not used. A version DOI, software licensing, and any controlled-data
 access commitment remain separate decisions requiring the authors' approval.
 This repository does not claim an unpublished DOI or grant institutional data
@@ -154,7 +167,7 @@ access. See [the submission checklist](docs/SUBMISSION_CHECKLIST.md).
 
 ## Approved aggregate results
 
-Point estimates are shown with 95% confidence intervals. AUC intervals use DeLong; individual binary-metric intervals use 1,000 percentile-bootstrap resamples. AUC comparisons use paired DeLong; sensitivity and specificity comparisons use two-sided exact McNemar tests; NPV differences use 10,000 paired-bootstrap resamples. Pooled external bootstrap resampling is stratified by institution. Significant comparisons are displayed as P < 0.05; exact P values remain in the aggregate statistics files. Non-significant P values are displayed to four decimal places, so 0.0912 corresponds to 0.091 when rounded to the manuscript's three decimal places.
+Point estimates are shown with 95% confidence intervals. AUC intervals use DeLong; individual binary-metric intervals use 1,000 percentile-bootstrap resamples. AUC comparisons use paired DeLong; sensitivity and specificity comparisons use two-sided exact McNemar tests; NPV differences use 10,000 paired-bootstrap resamples. Pooled external bootstrap resampling is stratified by institution. P values of 0.001 or greater are displayed to three decimal places. Values below 0.001 are shown as P < 0.001 with the calculated value in parentheses in three-significant-digit scientific notation. Unrounded P values remain in the aggregate statistics files. Figure panels use compact labels (P < 0.001 or three-decimal values) for legibility.
 
 ### Extended Data Table 1: Diagnostic performance of the AI model across development and validation cohorts.
 
@@ -177,24 +190,24 @@ Point estimates are shown with 95% confidence intervals. AUC intervals use DeLon
 | Metrics | Proposed AI Model (NCCT) | Non-gated Agatston Score (NCCT) | Gated Agatston Score (Dedicated CSCT) | Comparison with Non-gated Score | Comparison with Gated Score |
 | --- | --- | --- | --- | --- | --- |
 | External Validation Cohorts |  |  |  |  |  |
-| AUC | 0.848 (0.820 - 0.876) | 0.824 (0.795 - 0.853) | 0.868 (0.842 - 0.894) | P < 0.05 | P < 0.05 |
-| Sensitivity (%) | 81.8 (77.6 - 85.6) | 40.6 (35.4 - 45.9) | 57.9 (52.9 - 63.8) | P < 0.05 | P < 0.05 |
-| Specificity (%) | 74.1 (69.5 - 78.4) | 97.1 (95.5 - 98.6) | 92.3 (89.7 - 94.8) | P < 0.05 | P < 0.05 |
-| NPV (%) | 83.7 (80.3 - 87.2) | 67.4 (64.1 - 71.0) | 73.5 (70.2 - 77.3) | Delta +16.4 pp (+13.0 to +19.7); P < 0.05 | Delta +10.3 pp (+7.2 to +13.3); P < 0.05 |
+| AUC | 0.848 (0.820 - 0.876) | 0.824 (0.795 - 0.853) | 0.868 (0.842 - 0.894) | P = 0.045 | P = 0.046 |
+| Sensitivity (%) | 81.8 (77.6 - 85.6) | 40.6 (35.4 - 45.9) | 57.9 (52.9 - 63.8) | P < 0.001 (1.71 × 10⁻³⁷) | P < 0.001 (3.02 × 10⁻²⁰) |
+| Specificity (%) | 74.1 (69.5 - 78.4) | 97.1 (95.5 - 98.6) | 92.3 (89.7 - 94.8) | P < 0.001 (2.52 × 10⁻²⁹) | P < 0.001 (5.36 × 10⁻²¹) |
+| NPV (%) | 83.7 (80.3 - 87.2) | 67.4 (64.1 - 71.0) | 73.5 (70.2 - 77.3) | Delta +16.4 pp (+13.0 to +19.7); P < 0.001 (1.00 × 10⁻⁴) | Delta +10.3 pp (+7.2 to +13.3); P < 0.001 (1.00 × 10⁻⁴) |
 | Prospective Cohort |  |  |  |  |  |
-| AUC | 0.886 (0.845 - 0.927) | 0.857 (0.814 - 0.901) | 0.898 (0.860 - 0.936) | P = 0.0727 | P = 0.3214 |
-| Sensitivity (%) | 84.3 (77.1 - 91.1) | 60.2 (51.0 - 69.9) | 75.9 (67.6 - 83.5) | P < 0.05 | P < 0.05 |
-| Specificity (%) | 75.5 (70.5 - 80.3) | 94.4 (91.5 - 96.8) | 91.7 (88.8 - 94.9) | P < 0.05 | P < 0.05 |
-| NPV (%) | 93.1 (89.8 - 96.1) | 86.9 (83.2 - 90.6) | 91.4 (88.3 - 94.4) | Delta +6.2 pp (+3.4 to +9.2); P < 0.05 | Delta +1.6 pp (-0.1 to +3.7); P = 0.0912 |
+| AUC | 0.886 (0.845 - 0.927) | 0.857 (0.814 - 0.901) | 0.898 (0.860 - 0.936) | P = 0.073 | P = 0.321 |
+| Sensitivity (%) | 84.3 (77.1 - 91.1) | 60.2 (51.0 - 69.9) | 75.9 (67.6 - 83.5) | P < 0.001 (2.98 × 10⁻⁸) | P = 0.004 |
+| Specificity (%) | 75.5 (70.5 - 80.3) | 94.4 (91.5 - 96.8) | 91.7 (88.8 - 94.9) | P < 0.001 (3.92 × 10⁻¹⁴) | P < 0.001 (3.18 × 10⁻¹³) |
+| NPV (%) | 93.1 (89.8 - 96.1) | 86.9 (83.2 - 90.6) | 91.4 (88.3 - 94.4) | Delta +6.2 pp (+3.4 to +9.2); P < 0.001 (2.00 × 10⁻⁴) | Delta +1.6 pp (-0.1 to +3.7); P = 0.091 |
 | Real-world Cohort (n=2,388) |  |  |  |  |  |
-| AUC | 0.848 (0.830 - 0.866) | 0.813 (0.793 - 0.832) | 0.866 (0.850 - 0.883) | P < 0.05 | P < 0.05 |
-| Sensitivity (%) | 75.7 (72.6 - 79.1) | 43.1 (39.5 - 46.8) | 69.1 (65.7 - 72.5) | P < 0.05 | P < 0.05 |
-| Specificity (%) | 79.8 (77.8 - 81.8) | 95.2 (94.2 - 96.3) | 87.7 (85.9 - 89.2) | P < 0.05 | P < 0.05 |
-| NPV (%) | 89.1 (87.5 - 90.7) | 80.6 (78.8 - 82.2) | 87.6 (85.8 - 89.0) | Delta +8.4 pp (+7.1 to +9.8); P < 0.05 | Delta +1.5 pp (+0.5 to +2.6); P < 0.05 |
+| AUC | 0.848 (0.830 - 0.866) | 0.813 (0.793 - 0.832) | 0.866 (0.850 - 0.883) | P < 0.001 (3.58 × 10⁻⁸) | P = 0.001 |
+| Sensitivity (%) | 75.7 (72.6 - 79.1) | 43.1 (39.5 - 46.8) | 69.1 (65.7 - 72.5) | P < 0.001 (8.38 × 10⁻⁶⁶) | P < 0.001 (3.30 × 10⁻⁶) |
+| Specificity (%) | 79.8 (77.8 - 81.8) | 95.2 (94.2 - 96.3) | 87.7 (85.9 - 89.2) | P < 0.001 (2.32 × 10⁻⁷³) | P < 0.001 (1.69 × 10⁻²⁴) |
+| NPV (%) | 89.1 (87.5 - 90.7) | 80.6 (78.8 - 82.2) | 87.6 (85.8 - 89.0) | Delta +8.4 pp (+7.1 to +9.8); P < 0.001 (1.00 × 10⁻⁴) | Delta +1.5 pp (+0.5 to +2.6); P = 0.004 |
 
 ### Final standalone panels
 
-Panel labels and linked filenames below match the current manuscript assembly. Each of the 16 current panels is supplied as a PNG preview and editable PDF/SVG. Redundant standalone titles have been removed because figure and panel context is supplied by the final composite layout.
+Panel labels and linked filenames below match the current manuscript assembly. Each of the 16 current panels is supplied as a PNG preview and editable PDF/SVG. Standalone text follows the final composite layout; Extended Data Figure 2d retains its requested cohort title.
 
 #### Figure 2
 

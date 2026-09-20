@@ -1,26 +1,26 @@
 Cohort,Metric,Comparison,Raw P value,Display,Test,Difference (first method - second method),Difference 95% CI Low,Difference 95% CI High,CI method
-External Combined,AUC,AI Model vs Non-gated Agatston,0.04508799297753879,P < 0.05,two-sided paired DeLong,0.02386091127098333,0.0005223718164690597,0.0471994507254976,DeLong
-External Combined,Sensitivity,AI Model vs Non-gated Agatston,0.0000000000000000000000000000000000001712351746995257,P < 0.05,Exact McNemar on positives,,,,not applicable
-External Combined,Specificity,AI Model vs Non-gated Agatston,0.00000000000000000000000000002524354896707238,P < 0.05,Exact McNemar on negatives,,,,not applicable
-External Combined,NPV,AI Model vs Non-gated Agatston,0.00009999000099990002,P < 0.05,Paired bootstrap diff,0.1635215021035402,0.1301877401802114,0.1969565194837784,paired bootstrap
-External Combined,AUC,AI Model vs Gated Agatston,0.04571716536977003,P < 0.05,two-sided paired DeLong,-0.020020347358476798,-0.039659612276222396,-0.0003810824407311994,DeLong
-External Combined,Sensitivity,AI Model vs Gated Agatston,0.00000000000000000003018846051830852,P < 0.05,Exact McNemar on positives,,,,not applicable
-External Combined,Specificity,AI Model vs Gated Agatston,0.000000000000000000005361784730568725,P < 0.05,Exact McNemar on negatives,,,,not applicable
-External Combined,NPV,AI Model vs Gated Agatston,0.00009999000099990002,P < 0.05,Paired bootstrap diff,0.102665549556259,0.07234022093862975,0.133309407360154,paired bootstrap
-Prospective Cohort 410,AUC,AI Model vs Non-gated Agatston,0.07271011341008929,P = 0.0727,two-sided paired DeLong,0.02826833455972544,-0.0026040026686236055,0.059140671788074486,DeLong
-Prospective Cohort 410,Sensitivity,AI Model vs Non-gated Agatston,0.00000002980232238769531,P < 0.05,Exact McNemar on positives,,,,not applicable
-Prospective Cohort 410,Specificity,AI Model vs Non-gated Agatston,0.00000000000003918664438079533,P < 0.05,Exact McNemar on negatives,,,,not applicable
-Prospective Cohort 410,NPV,AI Model vs Non-gated Agatston,0.0001999800019998,P < 0.05,Paired bootstrap diff,0.06170980587356889,0.03360316810848728,0.0919780650328866,paired bootstrap
-Prospective Cohort 410,AUC,AI Model vs Gated Agatston,0.3214060201423662,P = 0.3214,two-sided paired DeLong,-0.012386558744174492,-0.03687009831441662,0.012096980826067642,DeLong
-Prospective Cohort 410,Sensitivity,AI Model vs Gated Agatston,0.00390625,P < 0.05,Exact McNemar on positives,,,,not applicable
-Prospective Cohort 410,Specificity,AI Model vs Gated Agatston,0.0000000000003179678742526448,P < 0.05,Exact McNemar on negatives,,,,not applicable
-Prospective Cohort 410,NPV,AI Model vs Gated Agatston,0.09119088091190881,P = 0.0912,Paired bootstrap diff,0.01642082575604498,-0.00122633498207263,0.03692011553804682,paired bootstrap
-Real-world Cohort,AUC,AI Model vs Non-gated Agatston,0.000000035834257942964366,P < 0.05,two-sided paired DeLong,0.03568345249800431,0.022991034721245154,0.04837587027476346,DeLong
-Real-world Cohort,AUC,AI Model vs Gated Agatston,0.0012181603409795758,P < 0.05,two-sided paired DeLong,-0.018057558762971437,-0.02899932470117623,-0.007115792824766643,DeLong
-Real-world Cohort,AUC,Gated Agatston vs Non-gated Agatston,0.000000000000000004511268326599553,P < 0.05,two-sided paired DeLong,0.053741011260975746,0.041585297282518335,0.06589672523943316,DeLong
-Real-world Cohort,Sensitivity,AI Model vs Non-gated Agatston,0.000000000000000000000000000000000000000000000000000000000000000008382805900553572,P < 0.05,two-sided exact McNemar,0.3250728862973761,,,not applicable
-Real-world Cohort,Specificity,AI Model vs Non-gated Agatston,0.00000000000000000000000000000000000000000000000000000000000000000000000023174604957625902,P < 0.05,two-sided exact McNemar,-0.15393654524089306,,,not applicable
-Real-world Cohort,NPV,AI Model vs Non-gated Agatston,0.00009999000099990002,P < 0.05,two-sided paired bootstrap difference (10000; seed=42),0.08449693135982761,0.07143521183430077,0.0975205578141888,paired bootstrap
-Real-world Cohort,Sensitivity,AI Model vs Gated Agatston,0.0000033028941070359494,P < 0.05,two-sided exact McNemar,0.06559766763848396,,,not applicable
-Real-world Cohort,Specificity,AI Model vs Gated Agatston,0.0000000000000000000000016865250492959473,P < 0.05,two-sided exact McNemar,-0.07814336075205641,,,not applicable
-Real-world Cohort,NPV,AI Model vs Gated Agatston,0.0040995900409959,P < 0.05,two-sided paired bootstrap difference (10000; seed=42),0.01497671041539761,0.004828529205196797,0.025632186669095242,paired bootstrap
+External Combined,AUC,AI Model vs Non-gated Agatston,0.04508799297753879,P = 0.045,two-sided paired DeLong,0.02386091127098333,0.0005223718164690597,0.0471994507254976,DeLong
+External Combined,Sensitivity,AI Model vs Non-gated Agatston,0.0000000000000000000000000000000000001712351746995257,P < 0.001 (1.71 × 10⁻³⁷),Exact McNemar on positives,,,,not applicable
+External Combined,Specificity,AI Model vs Non-gated Agatston,0.00000000000000000000000000002524354896707238,P < 0.001 (2.52 × 10⁻²⁹),Exact McNemar on negatives,,,,not applicable
+External Combined,NPV,AI Model vs Non-gated Agatston,0.00009999000099990002,P < 0.001 (1.00 × 10⁻⁴),Paired bootstrap diff,0.1635215021035402,0.1301877401802114,0.1969565194837784,paired bootstrap
+External Combined,AUC,AI Model vs Gated Agatston,0.04571716536977003,P = 0.046,two-sided paired DeLong,-0.020020347358476798,-0.039659612276222396,-0.0003810824407311994,DeLong
+External Combined,Sensitivity,AI Model vs Gated Agatston,0.00000000000000000003018846051830852,P < 0.001 (3.02 × 10⁻²⁰),Exact McNemar on positives,,,,not applicable
+External Combined,Specificity,AI Model vs Gated Agatston,0.000000000000000000005361784730568725,P < 0.001 (5.36 × 10⁻²¹),Exact McNemar on negatives,,,,not applicable
+External Combined,NPV,AI Model vs Gated Agatston,0.00009999000099990002,P < 0.001 (1.00 × 10⁻⁴),Paired bootstrap diff,0.102665549556259,0.07234022093862975,0.133309407360154,paired bootstrap
+Prospective Cohort 410,AUC,AI Model vs Non-gated Agatston,0.07271011341008929,P = 0.073,two-sided paired DeLong,0.02826833455972544,-0.0026040026686236055,0.059140671788074486,DeLong
+Prospective Cohort 410,Sensitivity,AI Model vs Non-gated Agatston,0.00000002980232238769531,P < 0.001 (2.98 × 10⁻⁸),Exact McNemar on positives,,,,not applicable
+Prospective Cohort 410,Specificity,AI Model vs Non-gated Agatston,0.00000000000003918664438079533,P < 0.001 (3.92 × 10⁻¹⁴),Exact McNemar on negatives,,,,not applicable
+Prospective Cohort 410,NPV,AI Model vs Non-gated Agatston,0.0001999800019998,P < 0.001 (2.00 × 10⁻⁴),Paired bootstrap diff,0.06170980587356889,0.03360316810848728,0.0919780650328866,paired bootstrap
+Prospective Cohort 410,AUC,AI Model vs Gated Agatston,0.3214060201423662,P = 0.321,two-sided paired DeLong,-0.012386558744174492,-0.03687009831441662,0.012096980826067642,DeLong
+Prospective Cohort 410,Sensitivity,AI Model vs Gated Agatston,0.00390625,P = 0.004,Exact McNemar on positives,,,,not applicable
+Prospective Cohort 410,Specificity,AI Model vs Gated Agatston,0.0000000000003179678742526448,P < 0.001 (3.18 × 10⁻¹³),Exact McNemar on negatives,,,,not applicable
+Prospective Cohort 410,NPV,AI Model vs Gated Agatston,0.09119088091190881,P = 0.091,Paired bootstrap diff,0.01642082575604498,-0.00122633498207263,0.03692011553804682,paired bootstrap
+Real-world Cohort,AUC,AI Model vs Non-gated Agatston,0.000000035834257942964366,P < 0.001 (3.58 × 10⁻⁸),two-sided paired DeLong,0.03568345249800431,0.022991034721245154,0.04837587027476346,DeLong
+Real-world Cohort,AUC,AI Model vs Gated Agatston,0.0012181603409795758,P = 0.001,two-sided paired DeLong,-0.018057558762971437,-0.02899932470117623,-0.007115792824766643,DeLong
+Real-world Cohort,AUC,Gated Agatston vs Non-gated Agatston,0.000000000000000004511268326599553,P < 0.001 (4.51 × 10⁻¹⁸),two-sided paired DeLong,0.053741011260975746,0.041585297282518335,0.06589672523943316,DeLong
+Real-world Cohort,Sensitivity,AI Model vs Non-gated Agatston,0.000000000000000000000000000000000000000000000000000000000000000008382805900553572,P < 0.001 (8.38 × 10⁻⁶⁶),two-sided exact McNemar,0.3250728862973761,,,not applicable
+Real-world Cohort,Specificity,AI Model vs Non-gated Agatston,0.00000000000000000000000000000000000000000000000000000000000000000000000023174604957625902,P < 0.001 (2.32 × 10⁻⁷³),two-sided exact McNemar,-0.15393654524089306,,,not applicable
+Real-world Cohort,NPV,AI Model vs Non-gated Agatston,0.00009999000099990002,P < 0.001 (1.00 × 10⁻⁴),two-sided paired bootstrap difference (10000; seed=42),0.08449693135982761,0.07143521183430077,0.0975205578141888,paired bootstrap
+Real-world Cohort,Sensitivity,AI Model vs Gated Agatston,0.0000033028941070359494,P < 0.001 (3.30 × 10⁻⁶),two-sided exact McNemar,0.06559766763848396,,,not applicable
+Real-world Cohort,Specificity,AI Model vs Gated Agatston,0.0000000000000000000000016865250492959473,P < 0.001 (1.69 × 10⁻²⁴),two-sided exact McNemar,-0.07814336075205641,,,not applicable
+Real-world Cohort,NPV,AI Model vs Gated Agatston,0.0040995900409959,P = 0.004,two-sided paired bootstrap difference (10000; seed=42),0.01497671041539761,0.004828529205196797,0.025632186669095242,paired bootstrap

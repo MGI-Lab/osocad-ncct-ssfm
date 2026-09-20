@@ -43,10 +43,11 @@ METHOD_NOTE = (
     'resamples. AUC comparisons use paired DeLong; sensitivity and specificity '
     'comparisons use two-sided exact McNemar tests; NPV differences use 10,000 '
     'paired-bootstrap resamples. Pooled external bootstrap resampling is '
-    'stratified by institution. Significant comparisons are displayed as P < 0.05; '
-    'exact P values remain in the aggregate statistics files. Non-significant '
-    'P values are displayed to four decimal places, so 0.0912 corresponds to '
-    '0.091 when rounded to the manuscript\'s three decimal places.'
+    'stratified by institution. P values of 0.001 or greater are displayed to '
+    'three decimal places. Values below 0.001 are shown as P < 0.001 with the '
+    'calculated value in parentheses in three-significant-digit scientific '
+    'notation. Unrounded P values remain in the aggregate statistics files. '
+    'Figure panels use compact labels (P < 0.001 or three-decimal values) for legibility.'
 )
 
 
@@ -75,8 +76,8 @@ def generated_section(tables: dict[str, list[list[str]]]) -> str:
     sections += ['### Final standalone panels',
                  'Panel labels and linked filenames below match the current manuscript assembly. '
                  'Each of the 16 current panels is supplied as a PNG preview and editable PDF/SVG. '
-                 'Redundant standalone titles have been removed because figure and panel context '
-                 'is supplied by the final composite layout.']
+                 'Standalone text follows the final composite layout; Extended Data Figure 2d '
+                 'retains its requested cohort title.']
     for title, panels in MANUSCRIPT_PANEL_GROUPS:
         rows = ['| Manuscript panel | Preview | Editable PDF | Editable SVG |',
                 '| --- | --- | --- | --- |']

@@ -22,6 +22,10 @@ and, after author approval, a version-specific Zenodo archive.
 - The current approved submission version is `v1.0.1`. Its tag triggers a bounded
   publication workflow after validation; check the [Release page](https://github.com/MGI-Lab/osocad-ncct-ssfm/releases/tag/v1.0.1)
   for the published status and attached figures/tables.
+- The `main` branch contains the later 20 September manuscript synchronization.
+  The `v1.0.1` tag and its downloadable archive remain immutable; cite a commit
+  permalink or create a newly reviewed version if the post-release files must be
+  referenced as a frozen submission snapshot.
 - The `v1.0.0` tag remains an immutable historical snapshot of the earlier
   20-panel working-number package; do not move or overwrite it.
 - Record the commit, asset manifest, method settings, and verification report.

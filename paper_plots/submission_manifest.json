@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "source_revision": "2026-09-14-manuscript-panel-sync",
-  "synchronized_on": "2026-09-14",
+  "source_revision": "2026-09-20-final-p-values-and-methods-sync",
+  "synchronized_on": "2026-09-20",
   "tables": [
     {
       "path": "paper_plots/table1_ai_performance.csv",
@@ -11,8 +11,8 @@
     },
     {
       "path": "paper_plots/table2_calcium_comparison.csv",
-      "sha256": "8c801cce9abb3918820441a55d7405ed18dfd577972b678077396d7d1e08b760",
-      "bytes": 1505,
+      "sha256": "03b5ae82fcde7bed8b9958ab0e06260b2611a0b2010b03f71eb6d930ed395151",
+      "bytes": 1844,
       "manuscript_table": "Table 2"
     }
   ],
@@ -190,18 +190,18 @@
       "legacy_source_panel": "Fig5_B",
       "png": {
         "path": "paper_plots/Figure3_B.png",
-        "sha256": "c2c5cf8c848a53afe295e614490c598aaf707e6db7cf5cec00b845282e31b955",
-        "bytes": 99419
+        "sha256": "7393cf3fe1a8b46b206fa504ecd2aa19d374bb4b6e0380e16b45dedc57674630",
+        "bytes": 100408
       },
       "pdf": {
         "path": "paper_plots/Figure3_B.pdf",
-        "sha256": "9523020e1356a28efdac407bf562c6c8e49209fd5d28c0dee4af3415c216a404",
-        "bytes": 21501
+        "sha256": "7cb3175fc0ffe7b85c2a3ff9d4fef6de8740e60bf99ec5c6c579255d4d7a6469",
+        "bytes": 21227
       },
       "svg": {
         "path": "paper_plots/Figure3_B.svg",
-        "sha256": "f5a652815dd54ce72704b5a72382b7b078f507c56c56a66e9fb75bb0ceff0c7e",
-        "bytes": 15684
+        "sha256": "98f2475ffd96c2d8bec77facfbf54c306cf92b86215197a0f42fc1b79df4aad0",
+        "bytes": 15688
       },
       "width_mm": 88.0,
       "height_mm": 83.99,
@@ -238,18 +238,18 @@
       "legacy_source_panel": "Fig5_D",
       "png": {
         "path": "paper_plots/Figure3_D.png",
-        "sha256": "98ddb091f30001dc9283776f95dd8888fb5e44a05b11ad4cb7b6c99024347e6b",
-        "bytes": 100540
+        "sha256": "ff2873c22abc8a5e9fb51facc356b8982c503fa08a7083621adaaa175bedeaaa",
+        "bytes": 100184
       },
       "pdf": {
         "path": "paper_plots/Figure3_D.pdf",
-        "sha256": "661242d883ce254c5b901aaac9c9cfcdad0b85d6810fb138f121e3f5e27abeeb",
-        "bytes": 22129
+        "sha256": "b3b2fb94098213b1c558fa34b3b79db45f91c9a0488aac54fe681cbf08c722b5",
+        "bytes": 21954
       },
       "svg": {
         "path": "paper_plots/Figure3_D.svg",
-        "sha256": "c2db1cb034b80a4f3cadf1242e92fffd1df395ab27b77973cb50f3c1dadb2ac5",
-        "bytes": 15661
+        "sha256": "adca2f5260e424e894d17019090696246c4e1cdecf97bdba34261f63bce1d785",
+        "bytes": 15660
       },
       "width_mm": 88.0,
       "height_mm": 83.99,
@@ -286,18 +286,18 @@
       "legacy_source_panel": "Fig5_H",
       "png": {
         "path": "paper_plots/Figure3_F.png",
-        "sha256": "2714df044de2617be8afc6e3d4a711c904a98976c99098d64744fe60b502e4de",
-        "bytes": 96297
+        "sha256": "d4080729f275cd30c170761df7ffa69fc09a2de8fd4c981d885c89559fb7bc4e",
+        "bytes": 97627
       },
       "pdf": {
         "path": "paper_plots/Figure3_F.pdf",
-        "sha256": "b34063d582b7f9e414aeba1e3e09ec777742c735bb95fb5aa4503494957efab5",
-        "bytes": 21505
+        "sha256": "e1e10df6e1ebdea493ae7850a2b8ac8cb12e777e7a084b2a5d0983049f0d43c5",
+        "bytes": 21342
       },
       "svg": {
         "path": "paper_plots/Figure3_F.svg",
-        "sha256": "93800cbd9e5aa1f2a5065cd0f4f73373c7c8c222a34d9cd39d9b8ba7a4cf7b89",
-        "bytes": 15688
+        "sha256": "088151ee028ac5cf528c010049fa180cd392769a58d69f57773a92d669031113",
+        "bytes": 15689
       },
       "width_mm": 88.0,
       "height_mm": 83.99,
@@ -382,21 +382,21 @@
       "legacy_source_panel": "Fig5_I",
       "png": {
         "path": "paper_plots/ExtendedDataFigure2_D.png",
-        "sha256": "49fd43720a3600c9e03d634706d962255e0d990f608af0378942b97777605af2",
-        "bytes": 575801
+        "sha256": "a70c63979a3c6e6fa5660c1609254f773d3cb3ee4d00e5d4e1c9deaead1b6874",
+        "bytes": 601248
       },
       "pdf": {
         "path": "paper_plots/ExtendedDataFigure2_D.pdf",
-        "sha256": "ef5c4bd4c992a5d3cf31063874b54d9eb94aad9af4173cbf02db2c128d4c8873",
-        "bytes": 34193
+        "sha256": "3a22dfe1e3d8753e86207fd30392015ede2e359b26e45af38e926b4da882dbec",
+        "bytes": 297959
       },
       "svg": {
         "path": "paper_plots/ExtendedDataFigure2_D.svg",
-        "sha256": "b1b7ae97233ae80f60b2c32efbaaa86e84ec3f54bdf59de0fd233a4566dc469e",
-        "bytes": 392947
+        "sha256": "deaf9f7417e049ca0de99dfe7e33d288184fffe8b191fa1347608031d3c37299",
+        "bytes": 393345
       },
       "width_mm": 88.0,
-      "height_mm": 67.99,
+      "height_mm": 72.0,
       "dpi": 600,
       "plot_type": "original patient-order score scatter",
       "n": "2388"
@@ -405,8 +405,8 @@
   "aggregate_statistics": [
     {
       "path": "paper_plots/submission_sources/Table3_exact_statistics.csv",
-      "sha256": "15323b85461f7662315a3dbafb20dfc7cf43d7a74ef297736947aaf462cfed75",
-      "bytes": 4531,
+      "sha256": "d1e8672b0928115108911b5a63f4c06d68e472d860abc4d8c5c1fc81fd4b8b37",
+      "bytes": 4892,
       "derivation": "derived_aggregate_subset",
       "source_row_count": 33,
       "published_row_count": 25,
@@ -415,8 +415,8 @@
     },
     {
       "path": "paper_plots/submission_sources/panel_statistics.csv",
-      "sha256": "799a7c6696dc87e7d791da42648a63adac9f22e282ad29e041456ec9e1f7b076",
-      "bytes": 5424
+      "sha256": "e9a2cdf4d548d14fcdea7c18de9edafc7a1a08a938a1e7c5c5509cca0fbdae3a",
+      "bytes": 5540
     },
     {
       "path": "paper_plots/submission_sources/all_cohort_auc_delong.csv",
@@ -455,17 +455,17 @@
     "single_model_binary_ci": "percentile bootstrap; 1000 replications",
     "sensitivity_specificity_accuracy_comparison": "two-sided exact McNemar",
     "npv_comparison": "two-sided paired bootstrap; 10000 replications",
-    "p_display": "P < 0.05 when significant; otherwise four decimal places",
+    "p_display": "P >= 0.001 to three decimals; P < 0.001 with a three-significant-digit scientific value in manuscript text/tables; compact labels in figures",
     "primary_comparison_p": "unadjusted two-sided P; Holm fields are supplementary sensitivity analyses only"
   },
   "notes": [
     "The 16 current standalone panels use filenames that match the manuscript assembly. Legacy working identifiers are recorded per panel for audit only.",
-    "Redundant standalone titles were removed to match the accepted composite layouts; plotted curves, points, bars, axes, legends, numerical labels and confidence intervals were preserved.",
-    "A deterministic baseline rerender matched all 16 previous PNG assets pixel-for-pixel before the title-only revision. No model inference or statistical analysis result was changed.",
+    "Standalone panel text was synchronized to the accepted composite layouts; ExtendedDataFigure2_D retains its requested cohort title.",
+    "No model inference or statistical analysis was rerun; only approved display labels, documentation and frozen assets were synchronized.",
     "The public table filenames are retained for backward compatibility; manuscript table numbers are stated separately.",
     "Earlier non-AUC intervals retain the approved frozen bootstrap estimates; no historical bootstrap AUC summary tables are included.",
-    "Exact statistical values are retained in the aggregate sources even where display tables use P < 0.05.",
-    "ExtendedDataFigure2_D retains the final Patients/Predicted score labels and Positive/Negative legend.",
+    "Unrounded P values are retained in the aggregate sources; manuscript display values follow the approved three-decimal/scientific-notation convention.",
+    "ExtendedDataFigure2_D retains the Real world (n=2388) title and Positive/Negative legend, with Participants and Predicted probability axis labels.",
     "No participant-level tabular data, source predictions, clinical identifiers, or workbooks are included.",
     "This manifest establishes asset identity and table/source consistency, not end-to-end checkpoint reproducibility."
   ]

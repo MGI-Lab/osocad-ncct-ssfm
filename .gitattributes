@@ -1,2 +1,3 @@
-# Preserve approved Matplotlib SVG bytes, including generated path whitespace.
+# Preserve approved Matplotlib SVG/PDF bytes, including generated path whitespace.
 paper_plots/*.svg -whitespace
+paper_plots/*.pdf -whitespace

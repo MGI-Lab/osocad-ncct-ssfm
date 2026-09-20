@@ -205,12 +205,13 @@ class DiagnosticStatisticsTests(unittest.TestCase):
     def test_figure_p_labels_accept_final_uppercase_and_keep_numeric_ns(self):
         import re
         parse = functions_from("code/plotting/redraw_calcium_sens_npv_from_excel.py", ["parse_p_display"], re=re)["parse_p_display"]
-        for value in ["P < 0.05", "p < 0.001", "p = 1.7e-37 (p < 0.05)"]:
-            self.assertEqual(parse(value), "P < 0.05")
-        self.assertEqual(parse("p = 0.0911909 (ns)"), "P = 0.0912")
+        for value in ["p < 0.001", "p = 1.7e-37 (p < 0.001)"]:
+            self.assertEqual(parse(value), "P < 0.001")
+        self.assertEqual(parse("p = 0.0911909 (ns)"), "P = 0.091")
+        self.assertEqual(parse("p = 0.00390625"), "P = 0.004")
         self.assertEqual(parse("P = 0.073"), "P = 0.073")
         with self.assertRaises(ValueError):
-            parse("P < 0.1")
+            parse("P < 0.05")
 
     def test_staging_redraw_does_not_refresh_input_or_public_html(self):
         tree = ast.parse((ROOT / "code/plotting/redraw_calcium_sens_npv_from_excel.py").read_text())

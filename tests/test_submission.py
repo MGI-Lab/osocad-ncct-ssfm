@@ -35,7 +35,7 @@ class DisplayTests(unittest.TestCase):
                 builder.replace_section(text, 'replacement')
 
     def test_html_escapes_values(self):
-        rendered = builder.table_html([['Metric', 'Value'], ['Synthetic', '<script> & P < 0.05']])
+        rendered = builder.table_html([['Metric', 'Value'], ['Synthetic', '<script> & P < 0.001']])
         self.assertNotIn('<script>', rendered)
         self.assertIn('&lt;script&gt;', rendered)
 

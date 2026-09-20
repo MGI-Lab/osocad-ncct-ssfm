@@ -49,6 +49,8 @@ COMPARISON_METHODS = [
     ("Gated Agatston Score (Dedicated CSCT)", "Gated Agatston"),
 ]
 
+SUPERSCRIPT = str.maketrans("-0123456789", "⁻⁰¹²³⁴⁵⁶⁷⁸⁹")
+
 
 def sensitivity(y_true, y_pred):
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
@@ -74,9 +76,12 @@ def format_estimate(value, low, high, percent=False):
 def format_pvalue(p):
     if not np.isfinite(p):
         return "P = NA"
-    if p < 0.05:
-        return "P < 0.05"
-    return f"P = {p:.4f}".rstrip("0").rstrip(".")
+    if p < 0.001:
+        if p == 0:
+            return "P < 0.001"
+        mantissa, exponent = f"{p:.2e}".split("e")
+        return f"P < 0.001 ({mantissa} × 10{str(int(exponent)).translate(SUPERSCRIPT)})"
+    return f"P = {p:.3f}"
 
 
 def format_pvalue_excel(p):
